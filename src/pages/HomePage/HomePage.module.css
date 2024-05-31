@@ -1,0 +1,19 @@
+:root {
+  --logo-proportion: 2;
+}
+
+.page {
+  margin-top: 32px;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  display: block;
+  width: calc(128px * var(--logo-proportion));
+  height: calc(128px * var(--logo-proportion));
+}
