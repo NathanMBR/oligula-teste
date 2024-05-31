@@ -1,8 +1,8 @@
-name: Release Workflow
+name: Unstable Release Workflow
 on:
   push:
     branches:
-      - master
+      - development
 
 jobs:
   publish:
@@ -50,8 +50,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: v__VERSION__
-          releaseName: "Oligula Automatizações v__VERSION__"
-          releaseBody: 'Veja a página de "releases" para baixar'
+          releaseName: "Oligula Automatizações v__VERSION__-unstable"
+          releaseBody: 'Veja a página de "releases" para baixar (VERSÃO INSTÁVEL)'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
