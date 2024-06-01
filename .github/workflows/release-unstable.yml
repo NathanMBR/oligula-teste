@@ -39,7 +39,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: Install Front-end Dependencies
         run: pnpm install
@@ -49,9 +49,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__
-          releaseName: "Oligula Automatizações v__VERSION__-unstable"
-          releaseBody: 'Veja a página de "releases" para baixar (VERSÃO INSTÁVEL)'
+          tagName: v__VERSION__-unstable
+          releaseName: "Oligula Automatizações v__VERSION__ (Instável)"
+          releaseBody: 'Para baixar, veja a seção "Assets" abaixo (VERSÃO INSTÁVEL)'
           releaseDraft: true
-          prerelease: false
+          prerelease: true
           args: ${{ matrix.args }}
