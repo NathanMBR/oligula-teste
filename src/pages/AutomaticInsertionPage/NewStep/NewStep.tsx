@@ -1,9 +1,12 @@
 import {
   Button,
+  Divider,
   Group,
   Modal,
   NativeSelect,
+  NumberInput,
   Text,
+  TextInput,
   Stack,
   Stepper
 } from '@mantine/core'
@@ -44,6 +47,8 @@ export const NewStep = (props: NewStepProps) => {
 
   const [currentStep, setCurrentStep] = useState(0)
   const [isCapturingMousePosition, setIsCapturingMousePosition] = useState(false)
+  const [text, setText] = useState('')
+  const [mousePosition, setMousePosition] = useState({ x: -1, y: -1 })
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -69,8 +74,7 @@ export const NewStep = (props: NewStepProps) => {
 
     if (currentStep === 1) {
       if (type === 'move') {
-        const x = Number(data.x)
-        const y = Number(data.y)
+        const { x, y } = mousePosition
 
         return !Number.isNaN(x) &&
           x >= 0 &&
@@ -82,7 +86,7 @@ export const NewStep = (props: NewStepProps) => {
         return ['left', 'right', 'middle'].includes(data.button)
 
       if (type === 'write')
-        return data.text?.trim().length > 0 || false
+        return text.length > 0 || false
     }
   }
 
@@ -104,9 +108,8 @@ export const NewStep = (props: NewStepProps) => {
     }
     /* eslint-enable no-await-in-loop */
 
-    const { x, y } = mousePositions[0]!
-    form.setFieldValue('data.x', x)
-    form.setFieldValue('data.y', y)
+    const capturedMousePosition = mousePositions[0]!
+    setMousePosition(capturedMousePosition)
 
     const isWindowMinimized = await appWindow.isMinimized()
     if (isWindowMinimized) {
@@ -116,7 +119,7 @@ export const NewStep = (props: NewStepProps) => {
 
         notification.sendNotification({
           title: 'Captura do mouse concluída',
-          body: `Posição X: ${x}, Y: ${y}`,
+          body: `Posição X: ${capturedMousePosition.x}, Y: ${capturedMousePosition.y}`,
           icon
         })
       }
@@ -157,6 +160,31 @@ export const NewStep = (props: NewStepProps) => {
             {
               formValues.type === 'move'
                 ? <Stack justify='space-between'>
+                  <Group grow>
+
+                    <NumberInput
+                      label='Posição X'
+                      clampBehavior='strict'
+                      min={0}
+                      value={mousePosition.x >= 0 ? mousePosition.x : undefined}
+                      allowDecimal={false}
+                      allowNegative={false}
+                      onChange={value => setMousePosition({ ...mousePosition, x: Number(value) })}
+                    />
+
+                    <NumberInput
+                      label='Posição Y'
+                      clampBehavior='strict'
+                      min={0}
+                      value={mousePosition.y >= 0 ? mousePosition.y : undefined}
+                      allowDecimal={false}
+                      allowNegative={false}
+                      onChange={value => setMousePosition({ ...mousePosition, y: Number(value) })}
+                    />
+                  </Group>
+
+                  <Divider label='ou' />
+
                   <Button
                     variant='default'
                     onClick={handleMousePositionCapture}
@@ -168,7 +196,9 @@ export const NewStep = (props: NewStepProps) => {
                           <IconPlayerRecordFilled color='#f00' size={20} />
                           <span>Capturando...</span>
                         </Group>
-                        : 'Capturar posição do mouse'
+                        : <>
+                          Capturar posição do mouse
+                        </>
                     }
                   </Button>
 
@@ -214,10 +244,17 @@ export const NewStep = (props: NewStepProps) => {
             }
 
             {
-              // formValues.type === 'write'
-              //   ? <>
-              //   </>
-              //   : null
+              formValues.type === 'write'
+                ? <>
+                  <TextInput
+                    label='Dado'
+                    placeholder='Insira seu dado aqui'
+                    key={form.key('data.text')}
+                    onChange={event => setText(event.currentTarget.value)}
+                  />
+
+                </>
+                : null
             }
 
             <Group justify='end' mt='md'>
@@ -230,9 +267,16 @@ export const NewStep = (props: NewStepProps) => {
                     id: generateRandomID()
                   } as Step
 
+                  if (step.type === 'move')
+                    step.data = mousePosition
+
+                  if (step.type === 'write')
+                    step.data.text = text
+
                   addStep(step)
                   form.reset()
                   setCurrentStep(0)
+                  setMousePosition({ x: -1, y: -1 })
                   onClose()
                 }}
                 disabled={!getFormValidation()}
