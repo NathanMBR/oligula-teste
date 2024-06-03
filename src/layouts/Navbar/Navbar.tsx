@@ -11,12 +11,14 @@ import {
 } from 'react'
 import { Link } from 'react-router-dom'
 
+import { PreloadContext } from '../../providers'
+
 import {
   type NavbarItemsLabels,
   navbarItems
 } from './navbarItems'
 import { ThemeSwitch } from './ThemeSwitch'
-import { PreloadContext } from '../../providers'
+import { Settings } from './Settings'
 
 import classes from './Navbar.module.css'
 
@@ -69,9 +71,11 @@ export const Navbar = (props: NavbarProps) => {
             }
           </div>
 
-          <div>
+          <Group justify='center'>
             <ThemeSwitch />
-          </div>
+
+            <Settings />
+          </Group>
         </nav>
       </AppShell.Navbar>
 
