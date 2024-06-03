@@ -1,7 +1,8 @@
 import {
   type Icon,
   IconAutomation,
-  IconRubberStamp
+  IconRubberStamp,
+  IconTable
 } from '@tabler/icons-react'
 
 type NavbarItem = {
@@ -21,6 +22,12 @@ export const navbarItems = [
     link: '/inmetro-seal-generator',
     label: 'Gerador de selo Inmetro',
     icon: IconRubberStamp
+  },
+
+  {
+    link: '/spreadsheet-formatter',
+    label: 'Formatador de planilhas',
+    icon: IconTable
   }
 ] as const satisfies Array<NavbarItem> // merging 'as const' with 'satisfies' to get both type enforcement and inference
 

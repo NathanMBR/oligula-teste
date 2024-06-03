@@ -3,3 +3,4 @@ export * from './NotFoundPage'
 
 export * from './AutomaticInsertionPage'
 export * from './InmetroSealGeneratorPage'
+export * from './SpreadsheetFormatterPage'

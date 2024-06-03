@@ -7,7 +7,8 @@ import {
   HomePage,
   NotFoundPage,
   AutomaticInsertionPage,
-  InmetroSealGeneratorPage
+  InmetroSealGeneratorPage,
+  SpreadsheetFormatterPage
 } from '../pages'
 
 const router = createBrowserRouter([
@@ -20,12 +21,17 @@ const router = createBrowserRouter([
   {
     path: '/automatic-insertion',
     element: <AutomaticInsertionPage />
-  },
-
-  {
-    path: '/inmetro-seal-generator',
-    element: <InmetroSealGeneratorPage />
   }
+
+  // {
+  //   path: '/inmetro-seal-generator',
+  //   element: <InmetroSealGeneratorPage />
+  // },
+
+  // {
+  //   path: '/spreadsheet-formatter',
+  //   element: <SpreadsheetFormatterPage />
+  // }
 ])
 
 export const ReactRouterProvider = () => {
