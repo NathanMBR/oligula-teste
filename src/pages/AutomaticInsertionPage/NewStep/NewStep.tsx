@@ -1,7 +1,9 @@
 import {
   Button,
   Divider,
+  FileInput,
   Group,
+  Loader,
   Modal,
   NativeSelect,
   NumberInput,
@@ -10,9 +12,13 @@ import {
   Stack,
   Stepper
 } from '@mantine/core'
+import {
+  IconFileText,
+  IconPencil,
+  IconPlayerRecordFilled
+} from '@tabler/icons-react'
 import { useState } from 'react'
 import { useForm } from '@mantine/form'
-import { IconPlayerRecordFilled } from '@tabler/icons-react'
 import { invoke } from '@tauri-apps/api'
 import { appWindow } from '@tauri-apps/api/window'
 import * as notification from '@tauri-apps/api/notification'
@@ -20,7 +26,7 @@ import * as path from '@tauri-apps/api/path'
 
 import {
   type Step,
-  StepTypesTitles
+  AutomationCard
 } from '../Automation'
 import {
   checkMousePositionEquality,
@@ -49,6 +55,12 @@ export const NewStep = (props: NewStepProps) => {
   const [isCapturingMousePosition, setIsCapturingMousePosition] = useState(false)
   const [text, setText] = useState('')
   const [mousePosition, setMousePosition] = useState({ x: -1, y: -1 })
+  const [fileContent, setFileContent] = useState<string>('')
+  const [isReadingFile, setIsReadingFile] = useState(false)
+  const [fileSaveAs, setFileSaveAs] = useState('')
+  const [filename, setFilename] = useState('')
+
+  const [globalVariables, setGlobalVariables] = useState<Record<string, unknown>>({})
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -59,7 +71,9 @@ export const NewStep = (props: NewStepProps) => {
         x: -1,
         y: -1,
         button: 'left',
-        text: ''
+        text: '',
+        filename: '',
+        saveAs: ''
       }
     }
   })
@@ -70,7 +84,7 @@ export const NewStep = (props: NewStepProps) => {
     const { type, data } = formValues
 
     if (currentStep === 0)
-      return Object.keys(StepTypesTitles).includes(type)
+      return Object.keys(AutomationCard.StepTypesTitles).includes(type)
 
     if (currentStep === 1) {
       if (type === 'move') {
@@ -86,7 +100,10 @@ export const NewStep = (props: NewStepProps) => {
         return ['left', 'right', 'middle'].includes(data.button)
 
       if (type === 'write')
-        return text.length > 0 || false
+        return text.length > 0
+
+      if (type === 'readFile')
+        return fileContent.length > 0 && fileSaveAs.length > 0
     }
   }
 
@@ -144,7 +161,7 @@ export const NewStep = (props: NewStepProps) => {
             <NativeSelect
               label='Selecione o tipo'
               defaultValue='move'
-              data={Object.entries(StepTypesTitles).map(([value, label]) => ({ value, label }))}
+              data={Object.entries(AutomationCard.StepTypesTitles).map(([value, label]) => ({ value, label }))}
               disabled={isCapturingMousePosition}
               key={form.key('type')}
               {...form.getInputProps('type')}
@@ -161,9 +178,9 @@ export const NewStep = (props: NewStepProps) => {
               formValues.type === 'move'
                 ? <Stack justify='space-between'>
                   <Group grow>
-
                     <NumberInput
                       label='Posição X'
+                      placeholder='(vazio)'
                       clampBehavior='strict'
                       min={0}
                       value={mousePosition.x >= 0 ? mousePosition.x : undefined}
@@ -174,6 +191,7 @@ export const NewStep = (props: NewStepProps) => {
 
                     <NumberInput
                       label='Posição Y'
+                      placeholder='(vazio)'
                       clampBehavior='strict'
                       min={0}
                       value={mousePosition.y >= 0 ? mousePosition.y : undefined}
@@ -247,12 +265,47 @@ export const NewStep = (props: NewStepProps) => {
               formValues.type === 'write'
                 ? <>
                   <TextInput
-                    label='Dado'
-                    placeholder='Insira seu dado aqui'
+                    label='Inserir dado'
+                    placeholder='Digite o dado a ser inserido'
                     key={form.key('data.text')}
                     onChange={event => setText(event.currentTarget.value)}
                   />
+                </>
+                : null
+            }
 
+            {
+              formValues.type === 'readFile'
+                ? <>
+                  <FileInput
+                    label='Selecione o arquivo'
+                    placeholder='Clique para selecionar'
+                    pb='lg'
+                    key={form.key('data.path')}
+                    leftSection={isReadingFile ? <Loader size={16}/> : <IconFileText stroke={1.5} />}
+                    disabled={isReadingFile}
+                    onChange={file => {
+                      if (!file)
+                        return
+
+                      setFilename(file.name)
+
+                      setIsReadingFile(true)
+                      file
+                        .text()
+                        .then(fileText => setFileContent(fileText))
+                        .finally(() => setIsReadingFile(false))
+                    }}
+                    clearable
+                  />
+
+                  <TextInput
+                    label='Salvar como'
+                    placeholder='Digite o nome da variável em que o texto será salvo'
+                    key={form.key('data.saveAs')}
+                    leftSection={<IconPencil stroke={1.5} />}
+                    onChange={event => setFileSaveAs(event.currentTarget.value)}
+                  />
                 </>
                 : null
             }
@@ -273,10 +326,20 @@ export const NewStep = (props: NewStepProps) => {
                   if (step.type === 'write')
                     step.data.text = text
 
+                  if (step.type === 'readFile') {
+                    step.data.filename = filename
+                    step.data.saveAs = fileSaveAs
+                    setGlobalVariables({ ...globalVariables, [formValues.data.saveAs]: fileContent })
+                  }
+
                   addStep(step)
                   form.reset()
+
                   setCurrentStep(0)
                   setMousePosition({ x: -1, y: -1 })
+                  setText('')
+                  setFileContent('')
+
                   onClose()
                 }}
                 disabled={!getFormValidation()}

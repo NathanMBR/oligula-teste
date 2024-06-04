@@ -1,4 +1,5 @@
 import {
+  Badge,
   Card,
   CloseButton,
   Divider,
@@ -9,7 +10,10 @@ import {
 import {
   IconMouse2,
   IconPointer,
-  IconCursorText
+  IconCursorText,
+  IconFileText
+  // IconScissors
+  // IconRotateClockwise
 } from '@tabler/icons-react'
 import type {
   ReactElement,
@@ -17,7 +21,7 @@ import type {
 } from 'react'
 
 import { ensureCharactersLimit } from '../../../helpers'
-import { StepTypesTitles } from './Step'
+import type { Step } from './Step'
 
 export type AutomationCardProps = {
   icon: ReactElement
@@ -64,6 +68,14 @@ const AutomationCardBase = (props: AutomationCardProps) => {
 }
 
 export namespace AutomationCard {
+  export const StepTypesTitles: Record<Step['type'], string> = {
+    move: 'Mover o mouse',
+    click: 'Clicar com o mouse',
+    write: 'Inserir dado',
+    readFile: 'Ler texto de arquivo',
+    cycle: 'Repetir ações'
+  }
+
   export type MoveProps = {
     x: number
     y: number
@@ -75,6 +87,11 @@ export namespace AutomationCard {
 
   export type WriteProps = {
     text: string
+  }
+
+  export type ReadFileProps = {
+    filename: string
+    saveAs: string
   }
 
   export const Move = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & MoveProps) => <AutomationCardBase
@@ -114,6 +131,14 @@ export namespace AutomationCard {
     position={props.position}
     title={StepTypesTitles.write}
     label={<Text size='sm' style={{ overflow: 'hidden' }}>Escrever <i>&quot;{ensureCharactersLimit(props.text, 100)}&quot;</i></Text>}
+    onRemove={props.onRemove}
+  />
+
+  export const ReadFile = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ReadFileProps) => <AutomationCardBase
+    icon={<IconFileText />}
+    position={props.position}
+    title={StepTypesTitles.readFile}
+    label={<Group gap={4}><Text size='sm'>do arquivo <i>&quot;{ensureCharactersLimit(props.filename, 25)}&quot;</i>, e armazenar como</Text> <Badge>{props.saveAs}</Badge></Group>}
     onRemove={props.onRemove}
   />
 }

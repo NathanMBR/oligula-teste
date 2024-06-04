@@ -15,16 +15,29 @@ type WriteStep = {
   data: AutomationCard.WriteProps
 }
 
-export type Step = {
-  id: number
-} & (
+type ReadFileStep = {
+  type: 'readFile'
+  data: AutomationCard.ReadFileProps
+}
+
+type ActionUnion =
   MoveStep |
   ClickStep |
-  WriteStep
-)
+  WriteStep |
+  ReadFileStep
 
-export const StepTypesTitles: Record<Step['type'], string> = {
-  move: 'Mover o mouse',
-  click: 'Clicar com o mouse',
-  write: 'Inserir dado'
+interface CycleStep {
+  type: 'cycle'
+  data: {
+    iterable: string
+    steps: Array<ActionUnion | CycleStep>
+  }
 }
+
+type StepUnion =
+  ActionUnion |
+  CycleStep
+
+export type Step = {
+  id: number
+} & StepUnion

@@ -51,6 +51,15 @@ export const Automation = (props: AutomationProps) => {
               text={step.data.text}
               onRemove={() => removeStep(step.id)}
             />
+
+          if (type === 'readFile')
+            return <AutomationCard.ReadFile
+              key={step.id}
+              position={index + 1}
+              filename={step.data.filename}
+              saveAs={step.data.saveAs}
+              onRemove={() => removeStep(step.id)}
+            />
         })
       }
     </Stack>
