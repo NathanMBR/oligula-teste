@@ -1,36 +1,30 @@
 import { Stack } from '@mantine/core'
+import { useContext } from 'react'
+
+import { AutomationContext } from '../../../providers'
 
 import { AutomationCard } from './AutomationCard'
-import type { Step } from './Step'
 
-export type AutomationProps = {
-  steps: Array<Step>
-  removeStep: (id: number) => void
-}
-
-export const Automation = (props: AutomationProps) => {
+export const Automation = () => {
   const {
     steps,
     removeStep
-  } = props
+  } = useContext(AutomationContext)
 
   if (steps.length <= 0)
-    return (
-      <>
-
-      </>
-    )
+    return null
 
   return (
     <Stack>
       {
         steps.map((step, index) => {
           const { type } = step
+          const position = index + 1
 
           if (type === 'move')
             return <AutomationCard.Move
+              position={position}
               key={step.id}
-              position={index + 1}
               x={step.data.x}
               y={step.data.y}
               onRemove={() => removeStep(step.id)}
@@ -38,25 +32,35 @@ export const Automation = (props: AutomationProps) => {
 
           if (type === 'click')
             return <AutomationCard.Click
+              position={position}
               key={step.id}
-              position={index + 1}
               button={step.data.button}
               onRemove={() => removeStep(step.id)}
             />
 
           if (type === 'write')
             return <AutomationCard.Write
+              position={position}
               key={step.id}
-              position={index + 1}
               text={step.data.text}
               onRemove={() => removeStep(step.id)}
             />
 
           if (type === 'readFile')
             return <AutomationCard.ReadFile
+              position={position}
               key={step.id}
-              position={index + 1}
               filename={step.data.filename}
+              saveAs={step.data.saveAs}
+              onRemove={() => removeStep(step.id)}
+            />
+
+          if (type === 'parseString')
+            return <AutomationCard.ParseString
+              position={position}
+              key={step.id}
+              readFrom={step.data.readFrom}
+              divider={step.data.divider}
               saveAs={step.data.saveAs}
               onRemove={() => removeStep(step.id)}
             />

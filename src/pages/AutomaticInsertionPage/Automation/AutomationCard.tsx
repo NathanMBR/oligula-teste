@@ -11,8 +11,8 @@ import {
   IconMouse2,
   IconPointer,
   IconCursorText,
-  IconFileText
-  // IconScissors
+  IconFileText,
+  IconScissors
   // IconRotateClockwise
 } from '@tabler/icons-react'
 import type {
@@ -73,6 +73,7 @@ export namespace AutomationCard {
     click: 'Clicar com o mouse',
     write: 'Inserir dado',
     readFile: 'Ler texto de arquivo',
+    parseString: 'Dividir texto',
     cycle: 'Repetir ações'
   }
 
@@ -91,6 +92,12 @@ export namespace AutomationCard {
 
   export type ReadFileProps = {
     filename: string
+    saveAs: string
+  }
+
+  export type ParseStringProps = {
+    readFrom: string
+    divider: string
     saveAs: string
   }
 
@@ -139,6 +146,14 @@ export namespace AutomationCard {
     position={props.position}
     title={StepTypesTitles.readFile}
     label={<Group gap={4}><Text size='sm'>do arquivo <i>&quot;{ensureCharactersLimit(props.filename, 25)}&quot;</i>, e armazenar como</Text> <Badge>{props.saveAs}</Badge></Group>}
+    onRemove={props.onRemove}
+  />
+
+  export const ParseString = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ParseStringProps) => <AutomationCardBase
+    icon={<IconScissors />}
+    position={props.position}
+    title={StepTypesTitles.parseString}
+    label={<Group gap={4}><Text size='sm'>armazenado em</Text> <Badge>{props.saveAs}</Badge> <Text>por <i>&quot;{ensureCharactersLimit(props.readFrom, 25)}&quot;</i></Text></Group>}
     onRemove={props.onRemove}
   />
 }

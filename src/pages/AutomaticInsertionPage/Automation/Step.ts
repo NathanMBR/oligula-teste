@@ -20,11 +20,17 @@ type ReadFileStep = {
   data: AutomationCard.ReadFileProps
 }
 
+type ParseStringStep = {
+  type: 'parseString'
+  data: AutomationCard.ParseStringProps
+}
+
 type ActionUnion =
   MoveStep |
   ClickStep |
   WriteStep |
-  ReadFileStep
+  ReadFileStep |
+  ParseStringStep
 
 interface CycleStep {
   type: 'cycle'
