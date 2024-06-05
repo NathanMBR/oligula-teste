@@ -2,28 +2,31 @@ import { invoke } from '@tauri-apps/api'
 
 import { sleep } from '../../../helpers'
 import { MouseButton } from '../../../types'
+import type { AutomationData } from '../../../providers'
 
-import type { Step } from '../Automation'
+export type RunAutomationData = Pick<AutomationData, 'steps' | 'setVariable'>
 
 /* eslint-disable no-await-in-loop */
-export const runAutomation = async (steps: Array<Step>) => {
+export const runAutomation = async (data: RunAutomationData) => {
+  const {
+    steps,
+    setVariable
+  } = data
+
   for (const step of steps) {
     await sleep(1000)
 
-    if (step.type === 'move') {
+    if (step.type === 'move')
       await invoke('move_mouse_to', { position: step.data })
-      continue
-    }
 
-    if (step.type === 'click') {
+    if (step.type === 'click')
       await invoke('click', { button: MouseButton[step.data.button] })
-      continue
-    }
 
-    if (step.type === 'write') {
+    if (step.type === 'write')
       await invoke('write', { text: step.data.text })
-      continue
-    }
+
+    if (step.type === 'readFile')
+      setVariable(step.data.saveAs, step.data.content)
   }
 }
 /* eslint-enable no-await-in-loop */
