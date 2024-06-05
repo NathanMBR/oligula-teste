@@ -1,5 +1,3 @@
-import { Button } from '@mantine/core'
-import { IconPlus } from '@tabler/icons-react'
 import { useState } from 'react'
 
 import {
@@ -8,11 +6,9 @@ import {
 } from '../../layouts'
 import { AutomationProvider } from '../../providers'
 
-import {
-  Automation,
-  RunAutomation
-} from './Automation'
+import { Automation } from './Automation'
 import { NewStep } from './NewStep'
+import { RunAutomation } from './RunAutomation'
 
 export const AutomaticInsertionPage = () => {
   const [isNewStepOpen, setIsNewStepOpen] = useState(false)
@@ -21,17 +17,7 @@ export const AutomaticInsertionPage = () => {
     <AutomationProvider>
       <Navbar selectedOption='Inserção automática'>
         <Header title='Inserção automática' backHref='/'>
-          <Button
-            variant='default'
-            mb='md'
-            leftSection={<IconPlus />}
-            onClick={() => setIsNewStepOpen(true)}
-            fullWidth
-          >
-            Adicionar passo
-          </Button>
-
-          <Automation />
+          <Automation setIsNewStepOpen={setIsNewStepOpen} />
 
           <NewStep
             isOpen={isNewStepOpen}

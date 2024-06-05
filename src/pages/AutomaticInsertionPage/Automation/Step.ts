@@ -17,7 +17,9 @@ type WriteStep = {
 
 type ReadFileStep = {
   type: 'readFile'
-  data: AutomationCard.ReadFileProps
+  data: AutomationCard.ReadFileProps & {
+    content: string
+  }
 }
 
 type ParseStringStep = {
