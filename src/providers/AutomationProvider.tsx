@@ -10,6 +10,9 @@ import type {
 } from '../pages/AutomaticInsertionPage/Automation'
 
 export type AutomationData = {
+  stageIndex: number
+  setStageIndex: (index: number) => void
+
   steps: Array<Step>
   addStep: (step: Step) => void
   removeStep: (id: Step['id']) => void
@@ -20,6 +23,9 @@ export type AutomationData = {
 }
 
 const defaultAutomationData: AutomationData = {
+  stageIndex: 0,
+  setStageIndex: () => {},
+
   steps: [],
   addStep: () => {},
   removeStep: () => {},
@@ -36,6 +42,7 @@ export type AutomationProviderProps = Required<PropsWithChildren>
 export const AutomationProvider = (props: AutomationProviderProps) => {
   const { children } = props
 
+  const [stageIndex, setStageIndex] = useState(defaultAutomationData.stageIndex)
   const [steps, setSteps] = useState(defaultAutomationData.steps)
   const [variables, setVariables] = useState(defaultAutomationData.variables)
 
@@ -46,6 +53,9 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
   const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name]: value })
 
   const automationData: AutomationData = {
+    stageIndex,
+    setStageIndex,
+
     steps,
     addStep,
     removeStep,
