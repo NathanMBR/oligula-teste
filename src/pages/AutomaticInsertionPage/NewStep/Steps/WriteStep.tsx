@@ -1,8 +1,14 @@
 import {
+  Divider,
+  NativeSelect,
+  Stack,
+  TextInput
+} from '@mantine/core'
+import {
   useContext,
   useState
 } from 'react'
-import { TextInput } from '@mantine/core'
+import { IconX } from '@tabler/icons-react'
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
@@ -17,15 +23,32 @@ export const WriteStep = (props: WriteStepProps) => {
   const { onClose } = props
 
   const [writeText, setWriteText] = useState('')
+  const [selectedVariable, setSelectedVariable] = useState('')
 
-  const { addStep } = useContext(AutomationContext)
+  const {
+    addStep,
+    listVariables,
+    getVariable
+  } = useContext(AutomationContext)
+
+  const variables = listVariables()
+
+  const selectError = variables.length <= 0
+    ? 'Desativado (não há variáveis disponíveis)'
+    : writeText !== ''
+      ? 'Desativado (dado manual inserido - remova-o para ativar)'
+      : ''
 
   const addWriteStep = () => {
+    const text = writeText.length > 0
+      ? writeText
+      : String(getVariable(selectedVariable))
+
     addStep({
       id: generateRandomID(),
       type: 'write',
       data: {
-        text: writeText
+        text
       }
     })
 
@@ -34,15 +57,29 @@ export const WriteStep = (props: WriteStepProps) => {
 
   return (
     <>
-      <TextInput
-        label='Inserir dado'
-        placeholder='Digite o dado a ser inserido'
-        onChange={event => setWriteText(event.currentTarget.value)}
-      />
+      <Stack justify='space-between'>
+        <TextInput
+          label='Inserir dado manual'
+          placeholder='Digite o dado a ser inserido'
+          onChange={event => setWriteText(event.currentTarget.value)}
+          rightSection={<IconX onClick={() => setWriteText('')}/>}
+        />
+
+        <Divider label='ou' />
+
+        <NativeSelect
+          label='Inserir dado de uma variável'
+          data={variables}
+          onChange={event => setSelectedVariable(event.currentTarget.value)}
+          disabled={variables.length <= 0 || writeText !== ''}
+          error={selectError}
+        />
+
+      </Stack>
 
       <StepFinishFooter
         addStep={addWriteStep}
-        allowFinish={writeText.length > 0}
+        allowFinish={writeText.length > 0 || selectedVariable !== ''}
       />
     </>
   )

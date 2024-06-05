@@ -20,6 +20,7 @@ export type AutomationData = {
   variables: Variables
   getVariable: (name: keyof Variables) => Variables[keyof Variables]
   setVariable: (name: keyof Variables, value: Variables[keyof Variables]) => void
+  listVariables: () => Array<keyof Variables>
 }
 
 const defaultAutomationData: AutomationData = {
@@ -32,7 +33,8 @@ const defaultAutomationData: AutomationData = {
 
   variables: {},
   getVariable: () => {},
-  setVariable: () => {}
+  setVariable: () => {},
+  listVariables: () => []
 }
 
 export const AutomationContext = createContext(defaultAutomationData)
@@ -51,6 +53,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
 
   const getVariable: AutomationData['getVariable'] = name => variables[name]
   const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name]: value })
+  const listVariables: AutomationData['listVariables'] = () => Object.keys(variables)
 
   const automationData: AutomationData = {
     stageIndex,
@@ -62,7 +65,8 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
 
     variables,
     getVariable,
-    setVariable
+    setVariable,
+    listVariables
   }
 
   return (
