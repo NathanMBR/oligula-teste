@@ -1,8 +1,9 @@
 name: Unstable Release Workflow
 on:
-  push:
-    branches:
-      - development
+  workflow_run:
+    workflows: [Quality Assurance Workflow]
+    types: [completed]
+    branches: [development]
 
 jobs:
   publish:
@@ -13,11 +14,13 @@ jobs:
       matrix:
         include:
           - platform: "ubuntu-22.04"
-            args: ""
+            args: "--verbose"
+
           - platform: "windows-latest"
-            args: ""
+            args: "--verbose"
 
     runs-on: ${{ matrix.platform }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
@@ -51,8 +54,10 @@ jobs:
         with:
           tagName: v__VERSION__-unstable-${{ github.run_id }}-${{ github.run_attempt }}
           releaseId: v__VERSION__-unstable-${{ github.run_id }}-${{ github.run_attempt }}
-          releaseName: "Oligula Automatizações v__VERSION__ (Instável)"
+          releaseName: "Oligula Automatizações v__VERSION__-${{ github.run_id }}-${{ github.run_attempt }} (Instável)"
           releaseBody: 'Para baixar, veja a seção "Assets" abaixo (VERSÃO INSTÁVEL)'
           releaseDraft: false
           prerelease: true
+          includeRelease: false
+          includeDebug: true
           args: ${{ matrix.args }}

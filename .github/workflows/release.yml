@@ -1,8 +1,9 @@
 name: Release Workflow
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: [Quality Assurance Workflow]
+    types: [completed]
+    branches: [master]
 
 jobs:
   publish:
@@ -18,6 +19,7 @@ jobs:
             args: ""
 
     runs-on: ${{ matrix.platform }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
