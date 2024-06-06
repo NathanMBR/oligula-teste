@@ -18,9 +18,10 @@ export type AutomationData = {
   removeStep: (id: Step['id']) => void
 
   variables: Variables
-  getVariable: (name: keyof Variables) => Variables[keyof Variables]
-  setVariable: (name: keyof Variables, value: Variables[keyof Variables]) => void
-  listVariables: () => Array<keyof Variables>
+  getVariable: (name: string) => Variables[string] | undefined
+  setVariable: (name: string, value: Variables[string]) => void
+  hasVariable: (name: string) => boolean
+  listVariables: () => Array<string>
 }
 
 const defaultAutomationData: AutomationData = {
@@ -32,8 +33,9 @@ const defaultAutomationData: AutomationData = {
   removeStep: () => {},
 
   variables: {},
-  getVariable: () => {},
+  getVariable: () => undefined,
   setVariable: () => {},
+  hasVariable: () => false,
   listVariables: () => []
 }
 
@@ -51,8 +53,9 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
   const addStep: AutomationData['addStep'] = step => setSteps([...steps, step])
   const removeStep: AutomationData['removeStep'] = id => setSteps(steps.filter(step => step.id !== id))
 
-  const getVariable: AutomationData['getVariable'] = name => variables[name]
-  const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name]: value })
+  const getVariable: AutomationData['getVariable'] = name => variables[name.toLowerCase()]
+  const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name.toLowerCase()]: value })
+  const hasVariable: AutomationData['hasVariable'] = name => name.toLowerCase() in variables
   const listVariables: AutomationData['listVariables'] = () => Object.keys(variables)
 
   const automationData: AutomationData = {
@@ -66,6 +69,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     variables,
     getVariable,
     setVariable,
+    hasVariable,
     listVariables
   }
 
