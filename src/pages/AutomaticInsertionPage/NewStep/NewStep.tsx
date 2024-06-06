@@ -14,7 +14,8 @@ import {
   MoveStep,
   ClickStep,
   WriteStep,
-  ReadFileStep
+  ReadFileStep,
+  ParseStringStep
 } from './Steps'
 import { TypeSelection } from './TypeSelection'
 import type { Step } from '../Automation'
@@ -83,6 +84,12 @@ export const NewStep = (props: NewStepProps) => {
           {
             stepType === 'readFile'
               ? <ReadFileStep onClose={onClose} />
+              : null
+          }
+
+          {
+            stepType === 'parseString'
+              ? <ParseStringStep onClose={onClose} />
               : null
           }
         </Stepper.Step>

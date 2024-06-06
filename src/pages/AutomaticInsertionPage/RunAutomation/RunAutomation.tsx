@@ -7,14 +7,14 @@ import { FAB } from '../../../components'
 import { runAutomation } from './runAutomation'
 
 export const RunAutomation = () => {
-  const { steps } = useContext(AutomationContext)
+  const automationPayload = useContext(AutomationContext)
 
   return (
     <FAB
       ActionIconProps={{ variant: 'filled' }}
-      onClick={() => runAutomation({ steps })}
+      onClick={() => runAutomation(automationPayload)}
       icon={<IconSettingsAutomation />}
-      hidden={steps.length <= 0}
+      hidden={automationPayload.steps.length <= 0}
     />
   )
 }

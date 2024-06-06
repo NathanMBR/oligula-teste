@@ -29,7 +29,8 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
   const allowFinish =
     filename.length > 0 &&
     saveAs.length > 0 &&
-    !isReadingFile
+    !isReadingFile &&
+    variableError === ''
 
   /* eslint-disable no-console */
   const handleFileChange = (file: File | null) => {

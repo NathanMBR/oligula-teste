@@ -1,10 +1,7 @@
 import {
-  CloseButton,
   Divider,
   NativeSelect,
-  Stack,
-  TextInput,
-  Transition
+  Stack
 } from '@mantine/core'
 import {
   useContext,
@@ -13,6 +10,7 @@ import {
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
+import { ClearableTextInput } from '../../../../components'
 
 import { StepFinishFooter } from '../StepFinishFooter'
 
@@ -25,8 +23,7 @@ export const WriteStep = (props: WriteStepProps) => {
 
   const {
     addStep,
-    listVariables,
-    getVariable
+    listVariables
   } = useContext(AutomationContext)
 
   const variables = listVariables()
@@ -41,15 +38,12 @@ export const WriteStep = (props: WriteStepProps) => {
       : ''
 
   const addWriteStep = () => {
-    const text = writeText.length > 0
-      ? writeText
-      : String(getVariable(selectedVariable)?.value)
-
     addStep({
       id: generateRandomID(),
       type: 'write',
       data: {
-        text
+        text: writeText,
+        readFrom: selectedVariable
       }
     })
 
@@ -59,12 +53,11 @@ export const WriteStep = (props: WriteStepProps) => {
   return (
     <>
       <Stack justify='space-between'>
-        <TextInput
+        <ClearableTextInput
           label='Inserir dado manual'
           placeholder='Digite o dado a ser inserido'
           value={writeText}
-          onChange={event => setWriteText(event.currentTarget.value)}
-          rightSection={<Transition mounted={writeText.length > 0} transition='fade'>{styles => <CloseButton style={styles} onClick={() => setWriteText('')} />}</Transition>}
+          onChange={text => setWriteText(text)}
         />
 
         <Divider label='ou' />

@@ -77,6 +77,11 @@ export namespace AutomationCard {
     cycle: 'Repetir ações'
   }
 
+  export const MAX_CHAR_LIMITS = {
+    BADGE: 30,
+    QUOTE: 50
+  }
+
   export type MoveProps = {
     x: number
     y: number
@@ -88,6 +93,7 @@ export namespace AutomationCard {
 
   export type WriteProps = {
     text: string
+    readFrom: string
   }
 
   export type ReadFileProps = {
@@ -96,6 +102,7 @@ export namespace AutomationCard {
   }
 
   export type ParseStringProps = {
+    parseString: string
     readFrom: string
     divider: string
     saveAs: string
@@ -125,35 +132,59 @@ export namespace AutomationCard {
     return (
       <AutomationCardBase
         icon={<IconPointer />}
-        position={position}
         title={StepTypesTitles.click}
-        label={`usando o botão ${MouseButtons[button]}`}
+        position={position}
         onRemove={onRemove}
+        label={`usando o botão ${MouseButtons[button]}`}
       />
     )
   }
 
   export const Write = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & WriteProps) => <AutomationCardBase
     icon={<IconCursorText />}
-    position={props.position}
     title={StepTypesTitles.write}
-    label={<Text size='sm' style={{ overflow: 'hidden' }}>Escrever <i>&quot;{ensureCharactersLimit(props.text, 100)}&quot;</i></Text>}
+    position={props.position}
     onRemove={props.onRemove}
+    label={
+      <Group gap={4}>
+        <Text size='sm' style={{ overflow: 'hidden' }}>Escrever {
+          props.text.length > 0
+            ? <i>&quot;{ensureCharactersLimit(props.text, 100)}&quot;</i>
+            : <>o conteúdo armazenado em <Badge color='orange'>{ensureCharactersLimit(props.readFrom, MAX_CHAR_LIMITS.BADGE)}</Badge></>
+        }</Text>
+      </Group>
+    }
   />
 
   export const ReadFile = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ReadFileProps) => <AutomationCardBase
     icon={<IconFileText />}
-    position={props.position}
     title={StepTypesTitles.readFile}
-    label={<Group gap={4}><Text size='sm'>do arquivo <i>&quot;{ensureCharactersLimit(props.filename, 25)}&quot;</i>, e armazenar como</Text> <Badge>{props.saveAs}</Badge></Group>}
+    position={props.position}
     onRemove={props.onRemove}
+    label={
+      <Group gap={4}>
+        <Text size='sm'>do arquivo <i>&quot;{ensureCharactersLimit(props.filename, MAX_CHAR_LIMITS.QUOTE)}&quot;</i>, e armazenar como</Text> <Badge>{ensureCharactersLimit(props.saveAs, MAX_CHAR_LIMITS.BADGE)}</Badge>
+      </Group>
+    }
   />
 
   export const ParseString = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ParseStringProps) => <AutomationCardBase
     icon={<IconScissors />}
     position={props.position}
     title={StepTypesTitles.parseString}
-    label={<Group gap={4}><Text size='sm'>armazenado em</Text> <Badge>{props.saveAs}</Badge> <Text>por <i>&quot;{ensureCharactersLimit(props.readFrom, 25)}&quot;</i></Text></Group>}
     onRemove={props.onRemove}
+    label={
+      <Group gap={4}>
+        <Text size='sm'>
+          {
+            props.parseString.length > 0
+              ? <>Dividir <i>&quot;{ensureCharactersLimit(props.parseString, MAX_CHAR_LIMITS.QUOTE)}&quot;</i></>
+              : <>armazenado em <Badge color='orange'>{props.readFrom}</Badge></>
+          }
+        </Text>
+
+        <Text size='sm'>por <i>&quot;{ensureCharactersLimit(props.divider, MAX_CHAR_LIMITS.BADGE)}&quot;</i>, e salvar em <Badge>{ensureCharactersLimit(props.saveAs, MAX_CHAR_LIMITS.BADGE)}</Badge></Text>
+      </Group>
+    }
   />
 }

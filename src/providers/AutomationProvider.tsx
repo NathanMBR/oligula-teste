@@ -1,5 +1,6 @@
 import {
   createContext,
+  // useEffect,
   useState,
   type PropsWithChildren
 } from 'react'
@@ -22,6 +23,8 @@ export type AutomationData = {
   setVariable: (name: string, value: Variables[string]) => void
   hasVariable: (name: string) => boolean
   listVariables: () => Array<string>
+  deleteVariable: (name: string) => void
+  deleteVariablesById: (id: number) => void
 }
 
 const defaultAutomationData: AutomationData = {
@@ -36,7 +39,9 @@ const defaultAutomationData: AutomationData = {
   getVariable: () => undefined,
   setVariable: () => {},
   hasVariable: () => false,
-  listVariables: () => []
+  listVariables: () => [],
+  deleteVariable: () => {},
+  deleteVariablesById: () => {}
 }
 
 export const AutomationContext = createContext(defaultAutomationData)
@@ -57,6 +62,19 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
   const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name.toLowerCase()]: value })
   const hasVariable: AutomationData['hasVariable'] = name => name.toLowerCase() in variables
   const listVariables: AutomationData['listVariables'] = () => Object.keys(variables)
+  const deleteVariable: AutomationData['deleteVariable'] = name => {
+    const newVariables = { ...variables }
+    delete newVariables[name.toLowerCase()]
+    setVariables(newVariables)
+  }
+  const deleteVariablesById: AutomationData['deleteVariablesById'] = id => {
+    const newVariables = { ...variables }
+    for (const [variable, { ownerId }] of Object.entries(newVariables))
+      if (ownerId === id)
+        delete newVariables[variable]
+
+    setVariables(newVariables)
+  }
 
   const automationData: AutomationData = {
     stageIndex,
@@ -70,8 +88,23 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     getVariable,
     setVariable,
     hasVariable,
-    listVariables
+    listVariables,
+    deleteVariable,
+    deleteVariablesById
   }
+
+  // // for debugging purposes only
+  // useEffect(() => {
+  //   for (const step of steps)
+  //     // eslint-disable-next-line no-console
+  //     console.log(step.id, step.type)
+  // }, [steps])
+
+  // useEffect(() => {
+  //   for (const [variable, value] of Object.entries(variables))
+  //     // eslint-disable-next-line no-console
+  //     console.log(variable, value)
+  // }, [variables])
 
   return (
     <AutomationContext.Provider value={automationData}>
