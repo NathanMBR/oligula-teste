@@ -23,9 +23,6 @@ export type WriteStepProps = {
 export const WriteStep = (props: WriteStepProps) => {
   const { onClose } = props
 
-  const [writeText, setWriteText] = useState('')
-  const [selectedVariable, setSelectedVariable] = useState('')
-
   const {
     addStep,
     listVariables,
@@ -33,6 +30,9 @@ export const WriteStep = (props: WriteStepProps) => {
   } = useContext(AutomationContext)
 
   const variables = listVariables()
+
+  const [writeText, setWriteText] = useState('')
+  const [selectedVariable, setSelectedVariable] = useState(variables[0] || '')
 
   const selectError = variables.length <= 0
     ? 'Desativado (não há variáveis disponíveis)'
