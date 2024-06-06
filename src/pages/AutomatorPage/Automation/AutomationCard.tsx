@@ -20,8 +20,16 @@ import type {
   ReactNode
 } from 'react'
 
+import type {
+  MoveStepData,
+  ClickStepData,
+  WriteStepData,
+  ReadFileStepData,
+  ParseStringStepData,
+  // CycleStep,
+  StepData
+} from '../../../types'
 import { ensureCharactersLimit } from '../../../helpers'
-import type { Step } from './Step'
 
 export type AutomationCardProps = {
   icon: ReactElement
@@ -68,7 +76,7 @@ const AutomationCardBase = (props: AutomationCardProps) => {
 }
 
 export namespace AutomationCard {
-  export const StepTypesTitles: Record<Step['type'], string> = {
+  export const StepTypesTitles: Record<StepData['type'], string> = {
     move: 'Mover o mouse',
     click: 'Clicar com o mouse',
     write: 'Inserir dado',
@@ -82,33 +90,7 @@ export namespace AutomationCard {
     QUOTE: 50
   }
 
-  export type MoveProps = {
-    x: number
-    y: number
-  }
-
-  export type ClickProps = {
-    button: 'left' | 'right' | 'middle'
-  }
-
-  export type WriteProps = {
-    text: string
-    readFrom: string
-  }
-
-  export type ReadFileProps = {
-    filename: string
-    saveAs: string
-  }
-
-  export type ParseStringProps = {
-    parseString: string
-    readFrom: string
-    divider: string
-    saveAs: string
-  }
-
-  export const Move = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & MoveProps) => <AutomationCardBase
+  export const Move = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & MoveStepData['data']) => <AutomationCardBase
     icon={<IconMouse2 />}
     position={props.position}
     title={StepTypesTitles.move}
@@ -116,7 +98,7 @@ export namespace AutomationCard {
     onRemove={props.onRemove}
   />
 
-  export const Click = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ClickProps) => {
+  export const Click = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ClickStepData['data']) => {
     const {
       position,
       button,
@@ -140,7 +122,7 @@ export namespace AutomationCard {
     )
   }
 
-  export const Write = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & WriteProps) => <AutomationCardBase
+  export const Write = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & WriteStepData['data']) => <AutomationCardBase
     icon={<IconCursorText />}
     title={StepTypesTitles.write}
     position={props.position}
@@ -156,7 +138,7 @@ export namespace AutomationCard {
     }
   />
 
-  export const ReadFile = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ReadFileProps) => <AutomationCardBase
+  export const ReadFile = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ReadFileStepData['data']) => <AutomationCardBase
     icon={<IconFileText />}
     title={StepTypesTitles.readFile}
     position={props.position}
@@ -168,7 +150,7 @@ export namespace AutomationCard {
     }
   />
 
-  export const ParseString = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ParseStringProps) => <AutomationCardBase
+  export const ParseString = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ParseStringStepData['data']) => <AutomationCardBase
     icon={<IconScissors />}
     position={props.position}
     title={StepTypesTitles.parseString}

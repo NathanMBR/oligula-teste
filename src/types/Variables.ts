@@ -4,5 +4,3 @@ export type Variables = {
     value: unknown
   }
 }
-
-type A = Variables[string]
