@@ -30,6 +30,9 @@ export const ensureCharactersLimit = (text: string, limit: number) => {
   if (!finalText)
     finalText = words.filter((_, index) => index < i).join(' ')
 
+  if (finalText === text)
+    return text
+
   const lastCharacter = finalText[finalText.length - 1]!
   if (specialEndCharacters.includes(lastCharacter))
     finalText += ' '
