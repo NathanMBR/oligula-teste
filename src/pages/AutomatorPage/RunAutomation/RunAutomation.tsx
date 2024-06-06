@@ -4,7 +4,7 @@ import { IconSettingsAutomation } from '@tabler/icons-react'
 import { AutomationContext } from '../../../providers'
 import { FAB } from '../../../components'
 
-import { runAutomation } from './runAutomation'
+import { runAutomationScript } from './runAutomationScript'
 
 export const RunAutomation = () => {
   const automationPayload = useContext(AutomationContext)
@@ -12,7 +12,7 @@ export const RunAutomation = () => {
   return (
     <FAB
       ActionIconProps={{ variant: 'filled' }}
-      onClick={() => runAutomation(automationPayload)}
+      onClick={() => runAutomationScript(automationPayload)}
       icon={<IconSettingsAutomation />}
       hidden={automationPayload.steps.length <= 0}
     />

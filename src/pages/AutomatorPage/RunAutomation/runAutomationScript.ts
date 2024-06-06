@@ -13,7 +13,7 @@ export type RunAutomationData = Pick<
 >
 
 /* eslint-disable no-await-in-loop */
-export const runAutomation = async (data: RunAutomationData) => {
+export const runAutomationScript = async (data: RunAutomationData) => {
   const {
     steps,
 
