@@ -12,7 +12,7 @@ export const RunAutomation = () => {
   return (
     <FAB
       ActionIconProps={{ variant: 'filled' }}
-      onClick={() => runAutomation(steps)}
+      onClick={() => runAutomation({ steps })}
       icon={<IconSettingsAutomation />}
       hidden={steps.length <= 0}
     />

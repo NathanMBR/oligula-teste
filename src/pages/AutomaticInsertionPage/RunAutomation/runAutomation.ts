@@ -4,14 +4,11 @@ import { sleep } from '../../../helpers'
 import { MouseButton } from '../../../types'
 import type { AutomationData } from '../../../providers'
 
-export type RunAutomationData = Pick<AutomationData, 'steps' | 'setVariable'>
+export type RunAutomationData = Pick<AutomationData, 'steps'>
 
 /* eslint-disable no-await-in-loop */
 export const runAutomation = async (data: RunAutomationData) => {
-  const {
-    steps,
-    setVariable
-  } = data
+  const { steps } = data
 
   for (const step of steps) {
     await sleep(1000)
@@ -26,7 +23,7 @@ export const runAutomation = async (data: RunAutomationData) => {
       await invoke('write', { text: step.data.text })
 
     if (step.type === 'readFile')
-      setVariable(step.data.saveAs, step.data.content)
+      continue
   }
 }
 /* eslint-enable no-await-in-loop */
