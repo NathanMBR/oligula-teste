@@ -10,13 +10,13 @@ import { Automation } from './Automation'
 import { NewStep } from './NewStep'
 import { RunAutomation } from './RunAutomation'
 
-export const AutomaticInsertionPage = () => {
+export const AutomatorPage = () => {
   const [isNewStepOpen, setIsNewStepOpen] = useState(false)
 
   return (
     <AutomationProvider>
-      <Navbar selectedOption='Inserção automática'>
-        <Header title='Inserção automática' backHref='/'>
+      <Navbar selectedOption='Automatizador'>
+        <Header title='Automatizador' backHref='/'>
           <Automation setIsNewStepOpen={setIsNewStepOpen} />
 
           <NewStep

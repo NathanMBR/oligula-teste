@@ -6,7 +6,7 @@ import {
 import {
   HomePage,
   NotFoundPage,
-  AutomaticInsertionPage,
+  AutomatorPage,
   InmetroSealGeneratorPage,
   SpreadsheetFormatterPage
 } from '../pages'
@@ -19,8 +19,8 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/automatic-insertion',
-    element: <AutomaticInsertionPage />
+    path: '/automator',
+    element: <AutomatorPage />
   }
 
   // {

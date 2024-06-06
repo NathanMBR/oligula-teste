@@ -8,7 +8,7 @@ import {
 import type {
   Step,
   Variables
-} from '../pages/AutomaticInsertionPage/Automation'
+} from '../pages/AutomatorPage/Automation'
 
 export type AutomationData = {
   stageIndex: number

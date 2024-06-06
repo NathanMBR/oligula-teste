@@ -13,8 +13,8 @@ type NavbarItem = {
 
 export const navbarItems = [
   {
-    link: '/automatic-insertion',
-    label: 'Inserção automática',
+    link: '/automator',
+    label: 'Automatizador',
     icon: IconAutomation
   },
 
