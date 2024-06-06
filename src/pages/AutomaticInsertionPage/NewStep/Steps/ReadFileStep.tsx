@@ -17,9 +17,14 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
   const [filename, setFilename] = useState('')
   const [fileContent, setFileContent] = useState('')
   const [saveAs, setSaveAs] = useState('')
+  const [variableError, setVariableError] = useState('')
   const [isReadingFile, setIsReadingFile] = useState(false)
 
-  const { addStep } = useContext(AutomationContext)
+  const {
+    addStep,
+    hasVariable,
+    setVariable
+  } = useContext(AutomationContext)
 
   const allowFinish =
     filename.length > 0 &&
@@ -43,14 +48,23 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
   /* eslint-enable no-console */
 
   const addReadFileStep = () => {
+    if (hasVariable(saveAs))
+      return setVariableError('Nome de variável já utilizado')
+
+    const id = generateRandomID()
+
     addStep({
-      id: generateRandomID(),
+      id,
       type: 'readFile',
       data: {
         filename: filename,
-        content: fileContent,
         saveAs: saveAs
       }
+    })
+
+    setVariable(saveAs, {
+      ownerId: id,
+      value: fileContent
     })
 
     onClose()
@@ -71,8 +85,14 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
       <TextInput
         label='Salvar como'
         placeholder='Digite o nome da variável em que o texto será salvo'
+        error={variableError}
         leftSection={<IconPencil stroke={1.5} />}
-        onChange={event => setSaveAs(event.currentTarget.value)}
+        onChange={
+          event => {
+            setSaveAs(event.currentTarget.value)
+            setVariableError('')
+          }
+        }
       />
 
       <StepFinishFooter
