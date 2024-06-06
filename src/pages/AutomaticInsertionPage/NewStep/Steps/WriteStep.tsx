@@ -1,14 +1,15 @@
 import {
+  CloseButton,
   Divider,
   NativeSelect,
   Stack,
-  TextInput
+  TextInput,
+  Transition
 } from '@mantine/core'
 import {
   useContext,
   useState
 } from 'react'
-import { IconX } from '@tabler/icons-react'
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
@@ -36,13 +37,13 @@ export const WriteStep = (props: WriteStepProps) => {
   const selectError = variables.length <= 0
     ? 'Desativado (não há variáveis disponíveis)'
     : writeText !== ''
-      ? 'Desativado (dado manual inserido - remova-o para ativar)'
+      ? 'Desativado (dado manual inserido; remova-o para ativar)'
       : ''
 
   const addWriteStep = () => {
     const text = writeText.length > 0
       ? writeText
-      : String(getVariable(selectedVariable))
+      : String(getVariable(selectedVariable)?.value)
 
     addStep({
       id: generateRandomID(),
@@ -61,8 +62,9 @@ export const WriteStep = (props: WriteStepProps) => {
         <TextInput
           label='Inserir dado manual'
           placeholder='Digite o dado a ser inserido'
+          value={writeText}
           onChange={event => setWriteText(event.currentTarget.value)}
-          rightSection={<IconX onClick={() => setWriteText('')}/>}
+          rightSection={<Transition mounted={writeText.length > 0} transition='fade'>{styles => <CloseButton style={styles} onClick={() => setWriteText('')} />}</Transition>}
         />
 
         <Divider label='ou' />
@@ -74,7 +76,6 @@ export const WriteStep = (props: WriteStepProps) => {
           disabled={variables.length <= 0 || writeText !== ''}
           error={selectError}
         />
-
       </Stack>
 
       <StepFinishFooter
