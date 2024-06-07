@@ -50,6 +50,7 @@ export interface CycleStepData {
   type: 'cycle'
   data: {
     iterable: string
+    saveItemsAs: string
     steps: Array<ActionUnion | CycleStepData>
   }
 }

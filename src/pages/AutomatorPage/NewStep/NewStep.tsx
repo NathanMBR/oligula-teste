@@ -11,11 +11,15 @@ import {
 import { AutomationContext } from '../../../providers'
 
 import {
+  // actions
   MoveStep,
   ClickStep,
   WriteStep,
   ReadFileStep,
-  ParseStringStep
+  ParseStringStep,
+
+  // statements
+  CycleStep
 } from './Steps'
 import { TypeSelection } from './TypeSelection'
 import type { StepData } from '../../../types'
@@ -63,6 +67,8 @@ export const NewStep = (props: NewStepProps) => {
         </Stepper.Step>
 
         <Stepper.Step label='Inserir dados'>
+          {/* actions */}
+
           {
             stepType === 'move'
               ? <MoveStep onClose={onClose} />
@@ -90,6 +96,14 @@ export const NewStep = (props: NewStepProps) => {
           {
             stepType === 'parseString'
               ? <ParseStringStep onClose={onClose} />
+              : null
+          }
+
+          {/* statements */}
+
+          {
+            stepType === 'cycle'
+              ? <CycleStep onClose={onClose} />
               : null
           }
         </Stepper.Step>
