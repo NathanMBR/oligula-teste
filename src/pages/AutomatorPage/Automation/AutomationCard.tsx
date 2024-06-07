@@ -18,8 +18,8 @@ import type {
   ClickStepData,
   WriteStepData,
   ReadFileStepData,
-  ParseStringStepData
-  // type CycleStepData,
+  ParseStringStepData,
+  CycleStepData
 } from '../../../types'
 import { ensureCharactersLimit } from '../../../helpers'
 
@@ -151,6 +151,22 @@ export namespace AutomationCard {
         </Text>
 
         <Text size='sm'>por <i>&quot;{ensureCharactersLimit(props.divider, MAX_CHAR_LIMITS.BADGE)}&quot;</i>, e salvar em <Badge>{ensureCharactersLimit(props.saveAs, MAX_CHAR_LIMITS.BADGE)}</Badge></Text>
+      </Group>
+    }
+  />
+
+  export const Cycle = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & CycleStepData['data']) => <AutomationCardBase
+    icon={<StepTypes.cycle.icon />}
+    title={StepTypes.cycle.title}
+    position={props.position}
+    onRemove={props.onRemove}
+    label={
+      <Group gap={4}>
+        <Text size='sm'>
+          armazenados na variável <Badge color='orange'>{ensureCharactersLimit(props.iterable, MAX_CHAR_LIMITS.BADGE)}</Badge>,
+
+          e atribuir cada um à variável <Badge color='pink'>{ensureCharactersLimit(props.saveItemsAs, MAX_CHAR_LIMITS.BADGE)}</Badge>
+        </Text>
       </Group>
     }
   />

@@ -93,6 +93,16 @@ export const Automation = (props: AutomationProps) => {
                 saveAs={step.data.saveAs}
                 onRemove={onRemove}
               />
+
+            if (type === 'cycle')
+              return <AutomationCard.Cycle
+                key={id}
+                position={position}
+                saveItemsAs={step.data.saveItemsAs}
+                iterable={step.data.iterable}
+                steps={step.data.steps}
+                onRemove={onRemove}
+              />
           })
         }
       </Stack>
