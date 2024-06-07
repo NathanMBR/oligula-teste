@@ -2,7 +2,7 @@ import {
   useContext,
   useState
 } from 'react'
-import { NativeSelect } from '@mantine/core'
+import { Select } from '@mantine/core'
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
@@ -35,9 +35,12 @@ export const ClickStep = (props: ClickStepProps) => {
 
   return (
     <>
-      <NativeSelect
+      <Select
         label='Botão do mouse'
-        onChange={event => setMouseButton(event.currentTarget.value as ClickStepData['data']['button'])}
+        checkIconPosition='right'
+        value={mouseButton}
+        allowDeselect={false}
+        onChange={value => setMouseButton(String(value) as ClickStepData['data']['button'])}
         data={[
           {
             value: 'left',

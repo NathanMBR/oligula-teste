@@ -1,6 +1,6 @@
 import {
   Divider,
-  NativeSelect,
+  Select,
   Stack
 } from '@mantine/core'
 import {
@@ -31,11 +31,15 @@ export const WriteStep = (props: WriteStepProps) => {
   const [writeText, setWriteText] = useState('')
   const [selectedVariable, setSelectedVariable] = useState(variables[0] || '')
 
-  const selectError = variables.length <= 0
+  const noVariablesError = variables.length <= 0
     ? 'Desativado (não há variáveis disponíveis)'
-    : writeText !== ''
-      ? 'Desativado (dado manual inserido; remova-o para ativar)'
-      : ''
+    : null
+
+  const manualInputError = writeText.length > 0
+    ? 'Desativado (dado manual inserido; remova-o para ativar)'
+    : null
+
+  const selectError = noVariablesError || manualInputError || ''
 
   const addWriteStep = () => {
     addStep({
@@ -62,12 +66,14 @@ export const WriteStep = (props: WriteStepProps) => {
 
         <Divider label='ou' />
 
-        <NativeSelect
+        <Select
           label='Inserir dado de uma variável'
+          checkIconPosition='right'
           data={variables}
-          onChange={event => setSelectedVariable(event.currentTarget.value)}
-          disabled={variables.length <= 0 || writeText !== ''}
           error={selectError}
+          allowDeselect={false}
+          disabled={selectError !== ''}
+          onChange={value => setSelectedVariable(String(value))}
         />
       </Stack>
 

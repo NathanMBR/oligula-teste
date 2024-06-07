@@ -1,7 +1,7 @@
 import {
   Divider,
   Fieldset,
-  NativeSelect,
+  Select,
   Stack
 } from '@mantine/core'
 import {
@@ -45,11 +45,15 @@ export const ParseStringStep = (props: ParseStringStepProps) => {
     saveAs !== '' &&
     variableError === ''
 
-  const selectError = variables.length <= 0
+  const noVariablesError = variables.length <= 0
     ? 'Desativado (não há variáveis disponíveis)'
-    : parseText !== ''
-      ? 'Desativado (dado manual inserido; remova-o para ativar)'
-      : ''
+    : null
+
+  const manualInputError = parseText.length > 0
+    ? 'Desativado (dado manual inserido; remova-o para ativar)'
+    : null
+
+  const selectError = noVariablesError || manualInputError || ''
 
   const addParseStringStep = () => {
     if (hasVariable(saveAs))
@@ -83,19 +87,22 @@ export const ParseStringStep = (props: ParseStringStepProps) => {
           <Stack>
             <ClearableTextInput
               label='Inserir texto manualmente'
-              placeholder='Insira o dado a ser dividido'
+              placeholder='Insira o texto a ser dividido'
               value={parseText}
               onChange={text => setParseText(text)}
             />
 
             <Divider label='ou' />
 
-            <NativeSelect
+            <Select
               label='Inserir texto de uma variável'
+              checkIconPosition='right'
               data={variables}
               error={selectError}
-              disabled={variables.length <= 0 || parseText !== ''}
-              onChange={event => setSelectedVariable(event.currentTarget.value)}
+              allowDeselect={false}
+              value={selectedVariable}
+              disabled={selectError !== ''}
+              onChange={value => setSelectedVariable(String(value))}
             />
           </Stack>
         </Fieldset>
