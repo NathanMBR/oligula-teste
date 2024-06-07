@@ -20,14 +20,14 @@ import type {
   ReactNode
 } from 'react'
 
-import type {
-  MoveStepData,
-  ClickStepData,
-  WriteStepData,
-  ReadFileStepData,
-  ParseStringStepData,
-  // CycleStep,
-  StepData
+import {
+  type MoveStepData,
+  type ClickStepData,
+  type WriteStepData,
+  type ReadFileStepData,
+  type ParseStringStepData,
+  // type CycleStepData,
+  StepTypesTitles
 } from '../../../types'
 import { ensureCharactersLimit } from '../../../helpers'
 
@@ -76,16 +76,7 @@ const AutomationCardBase = (props: AutomationCardProps) => {
 }
 
 export namespace AutomationCard {
-  export const StepTypesTitles: Record<StepData['type'], string> = {
-    move: 'Mover o mouse',
-    click: 'Clicar com o mouse',
-    write: 'Inserir dado',
-    readFile: 'Ler texto de arquivo',
-    parseString: 'Dividir texto',
-    cycle: 'Repetir ações'
-  }
-
-  export const MAX_CHAR_LIMITS = {
+  const MAX_CHAR_LIMITS = {
     BADGE: 30,
     QUOTE: 50
   }
