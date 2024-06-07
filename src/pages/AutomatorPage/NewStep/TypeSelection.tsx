@@ -38,6 +38,13 @@ export const TypeSelection = (props: TypeSelectionProps) => {
     ]
   } satisfies Record<string, Array<StepData['type']>>
 
+  const selectedType = StepTypes[stepType]
+
+  const iconProps = {
+    size: 18,
+    stroke: 1.5
+  }
+
   return (
     <>
       <Select
@@ -46,6 +53,7 @@ export const TypeSelection = (props: TypeSelectionProps) => {
         maxDropdownHeight={300}
         allowDeselect={false}
         value={stepType}
+        leftSection={<selectedType.icon {...iconProps} />}
         onChange={value => setStepType(value as StepData['type'])}
         data={[
           {
@@ -64,9 +72,9 @@ export const TypeSelection = (props: TypeSelectionProps) => {
           const Icon = StepTypes[option.value as keyof typeof StepTypes].icon
 
           return <Group flex={1} gap='xs'>
-            {<Icon size={18} stroke={1.5} />}
+            {<Icon {...iconProps} />}
             {option.label}
-            {checked ? <IconCheck size={18} style={{ marginInlineStart: 'auto' }} stroke={1.5} /> : null}
+            {checked ? <IconCheck style={{ marginInlineStart: 'auto' }} {...iconProps} /> : null}
           </Group>
         }}
       />
