@@ -18,7 +18,7 @@ import {
   ParseStringStep
 } from './Steps'
 import { TypeSelection } from './TypeSelection'
-import type { Step } from '../Automation'
+import type { StepData } from '../../../types'
 
 export type NewStepProps = {
   isOpen: boolean
@@ -36,7 +36,7 @@ export const NewStep = (props: NewStepProps) => {
     setStageIndex
   } = useContext(AutomationContext)
 
-  const [stepType, setStepType] = useState<Step['type']>('move')
+  const [stepType, setStepType] = useState<StepData['type']>('move')
 
   useEffect(() => {
     if (isOpen) {

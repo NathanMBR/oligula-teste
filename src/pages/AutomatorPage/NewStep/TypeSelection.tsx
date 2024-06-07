@@ -6,15 +6,13 @@ import {
 import { useContext } from 'react'
 
 import { AutomationContext } from '../../../providers'
+import type { StepData } from '../../../types'
 
-import {
-  AutomationCard,
-  Step
-} from '../Automation'
+import { AutomationCard } from '../Automation'
 
 export type TypeSelectionProps = {
-  stepType: Step['type']
-  setStepType: (value: Step['type']) => void
+  stepType: StepData['type']
+  setStepType: (value: StepData['type']) => void
 }
 
 export const TypeSelection = (props: TypeSelectionProps) => {
@@ -30,7 +28,7 @@ export const TypeSelection = (props: TypeSelectionProps) => {
       <NativeSelect
         label='Selecione o tipo'
         value={stepType}
-        onChange={event => setStepType(event.currentTarget.value as Step['type'])}
+        onChange={event => setStepType(event.currentTarget.value as StepData['type'])}
         data={Object.entries(AutomationCard.StepTypesTitles).map(([value, label]) => ({ value, label }))}
       />
 

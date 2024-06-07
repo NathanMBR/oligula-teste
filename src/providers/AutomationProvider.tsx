@@ -1,22 +1,21 @@
 import {
   createContext,
-  // useEffect,
   useState,
   type PropsWithChildren
 } from 'react'
 
 import type {
-  Step,
+  StepData,
   Variables
-} from '../pages/AutomatorPage/Automation'
+} from '../types'
 
 export type AutomationData = {
   stageIndex: number
   setStageIndex: (index: number) => void
 
-  steps: Array<Step>
-  addStep: (step: Step) => void
-  removeStep: (id: Step['id']) => void
+  steps: Array<StepData>
+  addStep: (step: StepData) => void
+  removeStep: (id: StepData['id']) => void
 
   variables: Variables
   getVariable: (name: string) => Variables[string] | undefined
@@ -92,19 +91,6 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     deleteVariable,
     deleteVariablesById
   }
-
-  // // for debugging purposes only
-  // useEffect(() => {
-  //   for (const step of steps)
-  //     // eslint-disable-next-line no-console
-  //     console.log(step.id, step.type)
-  // }, [steps])
-
-  // useEffect(() => {
-  //   for (const [variable, value] of Object.entries(variables))
-  //     // eslint-disable-next-line no-console
-  //     console.log(variable, value)
-  // }, [variables])
 
   return (
     <AutomationContext.Provider value={automationData}>

@@ -6,8 +6,8 @@ import { NativeSelect } from '@mantine/core'
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
+import type { ClickStepData } from '../../../../types'
 
-import { AutomationCard } from '../../Automation'
 import { StepFinishFooter } from '../StepFinishFooter'
 
 export type ClickStepProps = {
@@ -17,7 +17,7 @@ export type ClickStepProps = {
 export const ClickStep = (props: ClickStepProps) => {
   const { onClose } = props
 
-  const [mouseButton, setMouseButton] = useState<AutomationCard.ClickProps['button']>('left')
+  const [mouseButton, setMouseButton] = useState<ClickStepData['data']['button']>('left')
 
   const { addStep } = useContext(AutomationContext)
 
@@ -37,7 +37,7 @@ export const ClickStep = (props: ClickStepProps) => {
     <>
       <NativeSelect
         label='Botão do mouse'
-        onChange={event => setMouseButton(event.currentTarget.value as AutomationCard.ClickProps['button'])}
+        onChange={event => setMouseButton(event.currentTarget.value as ClickStepData['data']['button'])}
         data={[
           {
             value: 'left',
