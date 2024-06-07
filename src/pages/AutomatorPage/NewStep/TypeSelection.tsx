@@ -1,15 +1,15 @@
 import {
   Button,
   Group,
-  NativeSelect
+  Select
 } from '@mantine/core'
+import { IconCheck } from '@tabler/icons-react'
 import { useContext } from 'react'
 
-import {
-  type StepData,
-  StepTypesTitles
-} from '../../../types'
+import type { StepData } from '../../../types'
 import { AutomationContext } from '../../../providers'
+
+import { StepTypes } from '../StepTypes'
 
 export type TypeSelectionProps = {
   stepType: StepData['type']
@@ -40,31 +40,36 @@ export const TypeSelection = (props: TypeSelectionProps) => {
 
   return (
     <>
-      <NativeSelect
+      <Select
         label='Selecione o tipo'
+        checkIconPosition='right'
+        maxDropdownHeight={300}
+        allowDeselect={false}
         value={stepType}
-        onChange={event => setStepType(event.currentTarget.value as StepData['type'])}
-      >
-        <optgroup label='Ações'>
+        onChange={value => setStepType(value as StepData['type'])}
+        data={[
           {
-            typeCategories.actions.map(
-              type => <option key={type} value={type}>
-                {StepTypesTitles[type]}
-              </option>
-            )
-          }
-        </optgroup>
+            group: 'Ações',
+            items: typeCategories.actions.map(type => ({ value: type, label: StepTypes[type].title }))
+          },
 
-        <optgroup label='Condicionais / Repetições'>
           {
-            typeCategories.statements.map(
-              type => <option key={type} value={type}>
-                {StepTypesTitles[type]}
-              </option>
-            )
+            group: 'Condicionais / Repetições',
+            items: typeCategories.statements.map(type => ({ value: type, label: StepTypes[type].title }))
           }
-        </optgroup>
-      </NativeSelect>
+        ]}
+        renderOption={renderOptions => {
+          const { option, checked } = renderOptions
+
+          const Icon = StepTypes[option.value as keyof typeof StepTypes].icon
+
+          return <Group flex={1} gap='xs'>
+            {<Icon size={18} stroke={1.5} />}
+            {option.label}
+            {checked ? <IconCheck size={18} style={{ marginInlineStart: 'auto' }} stroke={1.5} /> : null}
+          </Group>
+        }}
+      />
 
       <Group justify='end' mt='md'>
         <Button onClick={() => setStageIndex(1)}>Próximo</Button>
