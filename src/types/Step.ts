@@ -61,12 +61,3 @@ type StepUnion =
 export type StepData = {
   id: number
 } & StepUnion
-
-export const StepTypesTitles: Record<StepData['type'], string> = {
-  move: 'Mover o mouse',
-  click: 'Clicar com o mouse',
-  write: 'Inserir dado',
-  readFile: 'Ler dados de um arquivo',
-  parseString: 'Dividir texto',
-  cycle: 'Repetir passos para vários valores'
-}

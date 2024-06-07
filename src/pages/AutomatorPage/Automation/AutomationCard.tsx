@@ -7,29 +7,23 @@ import {
   Stack,
   Text
 } from '@mantine/core'
-import {
-  IconMouse2,
-  IconPointer,
-  IconCursorText,
-  IconFileText,
-  IconScissors
-  // IconRotateClockwise
-} from '@tabler/icons-react'
+
 import type {
   ReactElement,
   ReactNode
 } from 'react'
 
-import {
-  type MoveStepData,
-  type ClickStepData,
-  type WriteStepData,
-  type ReadFileStepData,
-  type ParseStringStepData,
+import type {
+  MoveStepData,
+  ClickStepData,
+  WriteStepData,
+  ReadFileStepData,
+  ParseStringStepData
   // type CycleStepData,
-  StepTypesTitles
 } from '../../../types'
 import { ensureCharactersLimit } from '../../../helpers'
+
+import { StepTypes } from '../StepTypes'
 
 export type AutomationCardProps = {
   icon: ReactElement
@@ -82,11 +76,11 @@ export namespace AutomationCard {
   }
 
   export const Move = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & MoveStepData['data']) => <AutomationCardBase
-    icon={<IconMouse2 />}
+    icon={<StepTypes.move.icon />}
+    title={StepTypes.move.title}
     position={props.position}
-    title={StepTypesTitles.move}
-    label={`para a posição x: ${props.x}, y: ${props.y}`}
     onRemove={props.onRemove}
+    label={`para a posição x: ${props.x}, y: ${props.y}`}
   />
 
   export const Click = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ClickStepData['data']) => {
@@ -104,8 +98,8 @@ export namespace AutomationCard {
 
     return (
       <AutomationCardBase
-        icon={<IconPointer />}
-        title={StepTypesTitles.click}
+        icon={<StepTypes.click.icon />}
+        title={StepTypes.click.title}
         position={position}
         onRemove={onRemove}
         label={`usando o botão ${MouseButtons[button]}`}
@@ -114,8 +108,8 @@ export namespace AutomationCard {
   }
 
   export const Write = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & WriteStepData['data']) => <AutomationCardBase
-    icon={<IconCursorText />}
-    title={StepTypesTitles.write}
+    icon={<StepTypes.write.icon />}
+    title={StepTypes.write.title}
     position={props.position}
     onRemove={props.onRemove}
     label={
@@ -130,8 +124,8 @@ export namespace AutomationCard {
   />
 
   export const ReadFile = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ReadFileStepData['data']) => <AutomationCardBase
-    icon={<IconFileText />}
-    title={StepTypesTitles.readFile}
+    icon={<StepTypes.readFile.icon />}
+    title={StepTypes.readFile.title}
     position={props.position}
     onRemove={props.onRemove}
     label={
@@ -142,9 +136,9 @@ export namespace AutomationCard {
   />
 
   export const ParseString = (props: Pick<AutomationCardProps, 'position' | 'onRemove'> & ParseStringStepData['data']) => <AutomationCardBase
-    icon={<IconScissors />}
+    icon={<StepTypes.parseString.icon />}
+    title={StepTypes.parseString.title}
     position={props.position}
-    title={StepTypesTitles.parseString}
     onRemove={props.onRemove}
     label={
       <Group gap={4}>
