@@ -1,3 +1,7 @@
+type StepDefault = {
+  id: number
+}
+
 export type MoveStepData = {
   type: 'move'
   data: {
@@ -51,7 +55,7 @@ export interface CycleStepData {
   data: {
     iterable: string
     saveItemsAs: string
-    steps: Array<ActionUnion | CycleStepData>
+    steps: Array<(ActionUnion | CycleStepData) & StepDefault>
   }
 }
 
@@ -59,6 +63,6 @@ type StepUnion =
   ActionUnion |
   CycleStepData
 
-export type StepData = {
-  id: number
-} & StepUnion
+export type StepData =
+  StepDefault &
+  StepUnion
