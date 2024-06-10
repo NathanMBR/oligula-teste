@@ -1,13 +1,17 @@
 import {
+  ActionIcon,
   Badge,
   Card,
-  CloseButton,
   Divider,
   Group,
   Stack,
   Text
 } from '@mantine/core'
-
+import {
+  IconDotsVertical,
+  IconPlus,
+  IconX
+} from '@tabler/icons-react'
 import type {
   ReactElement,
   ReactNode
@@ -19,7 +23,8 @@ import type {
   WriteStepData,
   ReadFileStepData,
   ParseStringStepData,
-  CycleStepData
+  CycleStepData,
+  StepData
 } from '../../../types'
 import { ensureCharactersLimit } from '../../../helpers'
 
@@ -30,6 +35,7 @@ export type AutomationCardProps = {
   position: number
   title: string
   label?: ReactNode
+  steps?: Array<StepData>
   onRemove: () => void
 }
 
@@ -41,6 +47,21 @@ const AutomationCardBase = (props: AutomationCardProps) => {
     label,
     onRemove
   } = props
+
+  const minorIconProps = {
+    size: 16,
+    stroke: 1
+  }
+
+  const renderMinorSteps = (step: StepData) => {
+    const Icon = StepTypes[step.type].icon
+
+    return <Group gap='xs' key={step.id}>
+      <Icon {...minorIconProps} />
+
+      <Text size='sm'>{StepTypes[step.type].title}</Text>
+    </Group>
+  }
 
   return (
     <Card withBorder>
@@ -59,10 +80,40 @@ const AutomationCardBase = (props: AutomationCardProps) => {
                   ? <Text size='sm'>{label}</Text>
                   : label || null
               }
+
+              {
+                props.steps
+                  ? <Stack gap='xs' mt='lg'>
+                    {
+                      props.steps.length <= 4
+                        ? props.steps.map(renderMinorSteps)
+                        : <>
+                          {
+                            props.steps.filter((_step, index) => index < 3).map(renderMinorSteps)
+                          }
+
+                          <Group gap='xs'>
+                            <IconDotsVertical {...minorIconProps} />
+
+                            <Text size='sm'>e outros {props.steps.length - 3} passos</Text>
+                          </Group>
+                        </>
+                    }
+                  </Stack>
+                  : null
+              }
             </Stack>
           </Group>
 
-          <CloseButton onClick={onRemove} />
+          <Group>
+            <ActionIcon variant='subtle' color='gray'>
+              <IconPlus stroke={1.5} />
+            </ActionIcon>
+
+            <ActionIcon variant='subtle' color='gray' onClick={onRemove} >
+              <IconX stroke={1.5} />
+            </ActionIcon>
+          </Group>
         </Group>
       </Card.Section>
     </Card>
@@ -160,6 +211,7 @@ export namespace AutomationCard {
     title={StepTypes.cycle.title}
     position={props.position}
     onRemove={props.onRemove}
+    steps={props.steps}
     label={
       <Group gap={4}>
         <Text size='sm'>
