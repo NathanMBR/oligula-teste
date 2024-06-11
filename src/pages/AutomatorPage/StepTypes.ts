@@ -2,7 +2,7 @@ import {
   type Icon,
   IconMouse2,
   IconPointer,
-  IconCursorText,
+  IconPencil,
   IconFileText,
   IconScissors,
   IconRotateClockwise
@@ -29,7 +29,7 @@ export const StepTypes: Record<
 
   write: {
     title:'Inserir dado',
-    icon: IconCursorText
+    icon: IconPencil
   },
 
   readFile: {
