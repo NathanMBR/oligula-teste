@@ -16,6 +16,7 @@ export type AutomationData = {
   steps: Array<StepData>
   addStep: (step: StepData) => void
   removeStep: (id: StepData['id']) => void
+  getStep: (id: StepData['id']) => StepData | undefined
 
   variables: Variables
   getVariable: (name: string) => Variables[string] | undefined
@@ -23,24 +24,113 @@ export type AutomationData = {
   hasVariable: (name: string) => boolean
   listVariables: () => Array<string>
   deleteVariable: (name: string) => void
-  deleteVariablesById: (id: number) => void
+  deleteVariablesByStepId: (id: number) => void
 }
 
 const defaultAutomationData: AutomationData = {
   stageIndex: 0,
   setStageIndex: () => {},
 
-  steps: [],
+  steps: [
+    {
+      id: 1,
+      type: 'cycle',
+      data: {
+        iterable: 'list',
+        saveItemsAs: 'item',
+        steps: [
+          {
+            id: 4,
+            type: 'move',
+            data: {
+              x: 1280,
+              y: 540
+            }
+          },
+
+          {
+            id: 5,
+            type: 'click',
+            data: {
+              button: 'left'
+            }
+          },
+
+          {
+            id: 6,
+            type: 'write',
+            data: {
+              text: 'write test',
+              readFrom: ''
+            }
+          },
+
+          {
+            id: 2,
+            type: 'cycle',
+            data: {
+              iterable: 'item',
+              saveItemsAs: 'subitem',
+              steps: [
+                {
+                  id: 3,
+                  type: 'write',
+                  data: {
+                    text: '',
+                    readFrom: 'subitem'
+                  }
+                }
+              ]
+            }
+          },
+
+          {
+            id: 6,
+            type: 'write',
+            data: {
+              text: 'write test',
+              readFrom: ''
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      id: 999,
+      type: 'write',
+      data: {
+        text: 'write test',
+        readFrom: ''
+      }
+    },
+
+    {
+      id: 998,
+      type: 'cycle',
+      data: {
+        iterable: 'no-steps',
+        saveItemsAs: 'item-no-steps',
+        steps: []
+      }
+    }
+  ],
   addStep: () => {},
   removeStep: () => {},
+  getStep: () => undefined,
 
-  variables: {},
+  variables: {
+    list: {
+      ownerId: 0,
+      value: ['Lorem', 'ipsum', 'dolor', 'sit', 'amet']
+    }
+  },
   getVariable: () => undefined,
   setVariable: () => {},
   hasVariable: () => false,
   listVariables: () => [],
   deleteVariable: () => {},
-  deleteVariablesById: () => {}
+  deleteVariablesByStepId: () => {}
 }
 
 export const AutomationContext = createContext(defaultAutomationData)
@@ -55,7 +145,42 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
   const [variables, setVariables] = useState(defaultAutomationData.variables)
 
   const addStep: AutomationData['addStep'] = step => setSteps([...steps, step])
-  const removeStep: AutomationData['removeStep'] = id => setSteps(steps.filter(step => step.id !== id))
+  const removeStep: AutomationData['removeStep'] = id => {
+    const removeStepRecursively = (steps: Array<StepData>): Array<StepData> => {
+      for (const [index, step] of steps.entries()) {
+        if (step.id === id) {
+          const stepsCopy = JSON.parse(JSON.stringify(steps)) as Array<StepData>
+          stepsCopy.splice(index, 1)
+          return stepsCopy
+        }
+
+        if ('steps' in step.data)
+          return removeStepRecursively(step.data.steps)
+      }
+
+      return steps
+    }
+
+    return setSteps(removeStepRecursively(steps))
+  }
+  const getStep: AutomationData['getStep'] = id => {
+    const findStepRecursively = (stepsToSearch: Array<StepData>): StepData | undefined => {
+      for (const step of stepsToSearch) {
+        if (step.id === id)
+          return step
+
+        if ('steps' in step.data) {
+          const foundStep = findStepRecursively(step.data.steps)
+          if (foundStep)
+            return foundStep
+        }
+      }
+
+      return undefined
+    }
+
+    return findStepRecursively(steps)
+  }
 
   const getVariable: AutomationData['getVariable'] = name => variables[name.toLowerCase()]
   const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name.toLowerCase()]: value })
@@ -66,11 +191,27 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     delete newVariables[name.toLowerCase()]
     setVariables(newVariables)
   }
-  const deleteVariablesById: AutomationData['deleteVariablesById'] = id => {
+  const deleteVariablesByStepId: AutomationData['deleteVariablesByStepId'] = id => {
     const newVariables = { ...variables }
-    for (const [variable, { ownerId }] of Object.entries(newVariables))
-      if (ownerId === id)
-        delete newVariables[variable]
+
+    const deleteVariablesByStepIdRecursively = (step: StepData): void => {
+      const { data } = step
+
+      if ('saveAs' in data)
+        delete newVariables[data.saveAs.toLowerCase()]
+
+      if ('saveItemsAs' in data)
+        delete newVariables[data.saveItemsAs.toLowerCase()]
+
+      if ('steps' in data)
+        data.steps.forEach(deleteVariablesByStepIdRecursively)
+    }
+
+    const step = getStep(id)
+    if (!step)
+      return
+
+    deleteVariablesByStepIdRecursively(step)
 
     setVariables(newVariables)
   }
@@ -82,6 +223,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     steps,
     addStep,
     removeStep,
+    getStep,
 
     variables,
     getVariable,
@@ -89,7 +231,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     hasVariable,
     listVariables,
     deleteVariable,
-    deleteVariablesById
+    deleteVariablesByStepId
   }
 
   return (
