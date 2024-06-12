@@ -16,7 +16,6 @@ export type HeaderProps = PropsWithChildren<{
   backHref: string
   title: string
   subtitle?: string
-  description?: string
 }>
 
 export const Header = (props: HeaderProps) => {
