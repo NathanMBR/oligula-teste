@@ -77,6 +77,10 @@ export const Navbar = (props: NavbarProps) => {
                         ? undefined
                         : () => {
                           setPageTitle(item.label)
+
+                          if (item.label === 'Automatizador')
+                            return setPageSubtitle('Passos iniciais')
+
                           setPageSubtitle('')
                         }
                     }
