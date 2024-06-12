@@ -1,6 +1,7 @@
 import {
   MantineProvider,
   PreloadProvider,
+  HeaderProvider,
   ReactRouterProvider
 } from './providers'
 
@@ -10,7 +11,9 @@ export const App = () => {
   return (
     <MantineProvider>
       <PreloadProvider>
-        <ReactRouterProvider />
+        <HeaderProvider>
+          <ReactRouterProvider />
+        </HeaderProvider>
       </PreloadProvider>
     </MantineProvider>
   )
