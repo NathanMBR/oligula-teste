@@ -17,6 +17,7 @@ export type AutomationData = {
   addStep: (step: StepData) => void
   removeStep: (id: StepData['id']) => void
   getStep: (id: StepData['id']) => StepData | undefined
+  getStepPositionString: (id: StepData['id']) => string
 
   variables: Variables
   getVariable: (name: string) => Variables[string] | undefined
@@ -118,6 +119,7 @@ const defaultAutomationData: AutomationData = {
   addStep: () => {},
   removeStep: () => {},
   getStep: () => undefined,
+  getStepPositionString: () => '',
 
   variables: {
     list: {
@@ -163,6 +165,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
 
     return setSteps(removeStepRecursively(steps))
   }
+
   const getStep: AutomationData['getStep'] = id => {
     const findStepRecursively = (stepsToSearch: Array<StepData>): StepData | undefined => {
       for (const step of stepsToSearch) {
@@ -182,6 +185,41 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     return findStepRecursively(steps)
   }
 
+  const getStepPositionString: AutomationData['getStepPositionString'] = id => {
+    let positionString = ''
+
+    const findStepPositionRecursively = (stepsToSearch: Array<StepData>): boolean => {
+      let index = 1
+
+      for (const step of stepsToSearch) {
+        if (step.id === id) {
+          positionString += `${index}`
+
+          return true
+        }
+
+        if ('steps' in step.data) {
+          positionString += `${index}.`
+          const foundStep = findStepPositionRecursively(step.data.steps)
+          if (foundStep)
+            return true
+
+          const splittedPosition = positionString.split('.')
+          splittedPosition.pop()
+          positionString = splittedPosition.join('.')
+        }
+
+        index++
+      }
+
+      return false
+    }
+
+    findStepPositionRecursively(steps)
+
+    return positionString
+  }
+
   const getVariable: AutomationData['getVariable'] = name => variables[name.toLowerCase()]
   const setVariable: AutomationData['setVariable'] = (name, value) => setVariables({ ...variables, [name.toLowerCase()]: value })
   const hasVariable: AutomationData['hasVariable'] = name => name.toLowerCase() in variables
@@ -191,6 +229,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     delete newVariables[name.toLowerCase()]
     setVariables(newVariables)
   }
+
   const deleteVariablesByStepId: AutomationData['deleteVariablesByStepId'] = id => {
     const newVariables = { ...variables }
 
@@ -224,6 +263,7 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
     addStep,
     removeStep,
     getStep,
+    getStepPositionString,
 
     variables,
     getVariable,
