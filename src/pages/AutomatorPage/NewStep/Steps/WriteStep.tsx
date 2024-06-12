@@ -72,6 +72,7 @@ export const WriteStep = (props: WriteStepProps) => {
           data={variables}
           error={selectError}
           allowDeselect={false}
+          value={selectedVariable}
           disabled={selectError !== ''}
           onChange={value => setSelectedVariable(String(value))}
         />
