@@ -1,13 +1,19 @@
 import {
-  Button,
-  Stack
-} from '@mantine/core'
-import { useContext } from 'react'
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+import { Button } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
 
-import { AutomationContext } from '../../../providers'
+import {
+  AutomationContext,
+  HeaderContext
+} from '../../../providers'
+import type { StepData } from '../../../types'
 
-import { AutomationCard } from './AutomationCard'
+import { AutomationSteps } from './AutomationSteps'
+import { StepTypes } from '../StepTypes'
 
 export type AutomationProps = {
   setIsNewStepOpen: (value: boolean) => void
@@ -17,10 +23,37 @@ export const Automation = (props: AutomationProps) => {
   const { setIsNewStepOpen } = props
 
   const {
-    steps,
-    removeStep,
-    deleteVariablesById
+    steps: contextSteps,
+    getStep,
+    getStepPositionString
   } = useContext(AutomationContext)
+
+  const { setPageSubtitle: setCurrentSubtitle } = useContext(HeaderContext)
+
+  const [expandedStepId, setExpandedStepId] = useState<StepData['id']>(-1)
+  const [steps, setSteps] = useState(contextSteps)
+
+  useEffect(() => {
+    if (expandedStepId >= 0) {
+      const step = getStep(expandedStepId)
+      if (!step) {
+        // eslint-disable-next-line no-console
+        console.error(`Unexpected Error: Step with id ${expandedStepId} not found`)
+        return
+      }
+
+      if (!('steps' in step.data)) {
+        // eslint-disable-next-line no-console
+        console.error(`Unexpected Error: Step with id ${expandedStepId} has no steps`)
+        return
+      }
+
+      const stepPosition = getStepPositionString(expandedStepId)
+
+      setCurrentSubtitle(`Passo ${stepPosition}: ${StepTypes[step.type].title}`)
+      setSteps(step.data.steps)
+    }
+  }, [expandedStepId])
 
   return (
     <>
@@ -34,78 +67,10 @@ export const Automation = (props: AutomationProps) => {
         Adicionar passo
       </Button>
 
-      <Stack>
-        {
-          steps.map((step, index) => {
-            const {
-              id,
-              type
-            } = step
-            const position = index + 1
-
-            const onRemove = () => {
-              removeStep(id)
-              deleteVariablesById(id)
-            }
-
-            if (type === 'move')
-              return <AutomationCard.Move
-                key={id}
-                position={position}
-                x={step.data.x}
-                y={step.data.y}
-                onRemove={onRemove}
-              />
-
-            if (type === 'click')
-              return <AutomationCard.Click
-                key={id}
-                position={position}
-                button={step.data.button}
-                onRemove={onRemove}
-              />
-
-            if (type === 'write')
-              return <AutomationCard.Write
-                key={id}
-                position={position}
-                text={step.data.text}
-                readFrom={step.data.readFrom}
-                onRemove={onRemove}
-              />
-
-            if (type === 'readFile')
-              return <AutomationCard.ReadFile
-                key={id}
-                position={position}
-                filename={step.data.filename}
-                saveAs={step.data.saveAs}
-                onRemove={onRemove}
-              />
-
-            if (type === 'parseString')
-              return <AutomationCard.ParseString
-                key={id}
-                position={position}
-                parseString={step.data.parseString}
-                readFrom={step.data.readFrom}
-                divider={step.data.divider}
-                saveAs={step.data.saveAs}
-                onRemove={onRemove}
-              />
-
-            if (type === 'cycle')
-              return <AutomationCard.Cycle
-                key={id}
-                position={position}
-                saveItemsAs={step.data.saveItemsAs}
-                iterable={step.data.iterable}
-                steps={step.data.steps}
-                onRemove={onRemove}
-              />
-          })
-        }
-      </Stack>
+      <AutomationSteps
+        steps={steps}
+        setExpandedStepId={setExpandedStepId}
+      />
     </>
   )
 }
