@@ -1,6 +1,16 @@
-import { FileInput, Loader, TextInput } from '@mantine/core'
-import { IconFileText, IconPencil } from '@tabler/icons-react'
-import { useContext, useState } from 'react'
+import {
+  FileInput,
+  Loader,
+  TextInput
+} from '@mantine/core'
+import {
+  IconFileText,
+  IconVariable
+} from '@tabler/icons-react'
+import {
+  useContext,
+  useState
+} from 'react'
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
@@ -87,7 +97,7 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
         label='Salvar como'
         placeholder='Digite o nome da variável em que o texto será salvo'
         error={variableError}
-        leftSection={<IconPencil stroke={1.5} />}
+        leftSection={<IconVariable stroke={1.5} />}
         onChange={
           event => {
             setSaveAs(event.currentTarget.value)
