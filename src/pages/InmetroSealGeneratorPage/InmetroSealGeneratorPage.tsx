@@ -6,7 +6,7 @@ import {
 export const InmetroSealGeneratorPage = () => {
   return (
     <Navbar selectedOption='Gerador de selo Inmetro'>
-      <Header title='Gerador de selo Inmetro' backHref='/'>
+      <Header>
         <p>Teste</p>
       </Header>
     </Navbar>

@@ -6,7 +6,7 @@ import {
 export const SpreadsheetFormatterPage = () => {
   return (
     <Navbar selectedOption='Formatador de planilhas'>
-      <Header title='Formatador de planilhas' backHref='/'>
+      <Header>
         <p>Teste</p>
       </Header>
     </Navbar>

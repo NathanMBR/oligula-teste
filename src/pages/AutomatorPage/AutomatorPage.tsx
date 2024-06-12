@@ -16,7 +16,7 @@ export const AutomatorPage = () => {
   return (
     <AutomationProvider>
       <Navbar selectedOption='Automatizador'>
-        <Header title='Automatizador' backHref='/'>
+        <Header>
           <Automation setIsNewStepOpen={setIsNewStepOpen} />
 
           <NewStep

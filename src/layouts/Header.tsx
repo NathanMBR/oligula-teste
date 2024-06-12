@@ -6,25 +6,26 @@ import {
   Text,
   Title
 } from '@mantine/core'
+import {
+  useContext,
+  type PropsWithChildren
+} from 'react'
 import { IconChevronLeft } from '@tabler/icons-react'
 import { Link } from 'react-router-dom'
-import type { PropsWithChildren } from 'react'
 
+import { HeaderContext } from '../providers'
 import { ensureCharactersLimit } from '../helpers'
 
-export type HeaderProps = PropsWithChildren<{
-  backHref: string
-  title: string
-  subtitle?: string
-}>
+export type HeaderProps = Required<PropsWithChildren>
 
 export const Header = (props: HeaderProps) => {
+  const { children } = props
+
   const {
     backHref,
-    title,
-    subtitle,
-    children
-  } = props
+    pageTitle,
+    pageSubtitle
+  } = useContext(HeaderContext)
 
   return (
     <>
@@ -42,11 +43,11 @@ export const Header = (props: HeaderProps) => {
         </Link>
 
         <Box>
-          <Title order={1}>{title}</Title>
+          <Title order={1}>{pageTitle}</Title>
 
           {
-            subtitle
-              ? <Text size='md'>{ensureCharactersLimit(subtitle, 100)}</Text>
+            pageSubtitle
+              ? <Text size='md'>{ensureCharactersLimit(pageSubtitle, 100)}</Text>
               : null
           }
         </Box>
