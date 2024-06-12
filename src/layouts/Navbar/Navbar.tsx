@@ -36,7 +36,10 @@ export const Navbar = (props: NavbarProps) => {
   } = props
 
   const preloadData = useContext(PreloadContext)
-  const { setPageTitle } = useContext(HeaderContext)
+  const {
+    setPageTitle,
+    setPageSubtitle
+  } = useContext(HeaderContext)
 
   return (
     <AppShell
@@ -50,7 +53,10 @@ export const Navbar = (props: NavbarProps) => {
         <nav className={classes.navbar}>
           <div className={classes.navbarMain}>
             <Group className={classes.header} justify='space-between'>
-              <Link to='/' onClick={() => setPageTitle('')} className={classes.headerLink}>
+              <Link to='/' onClick={() => {
+                setPageTitle('')
+                setPageSubtitle('')
+              }} className={classes.headerLink}>
                 <Text size='lg'>Oligula Automatizações</Text>
               </Link>
               <Code fw={700}>{preloadData.app.version}</Code>
@@ -64,9 +70,16 @@ export const Navbar = (props: NavbarProps) => {
                 >
                   <Link
                     to={item.link}
-                    onClick={() => setPageTitle(item.label)}
                     className={classes.link}
                     data-active={item.label === selectedOption || undefined}
+                    onClick={
+                      item.label === selectedOption
+                        ? undefined
+                        : () => {
+                          setPageTitle(item.label)
+                          setPageSubtitle('')
+                        }
+                    }
                   >
                     <item.icon className={classes.linkIcon} stroke={1.5} />
                     <Text size='sm'>{item.label}</Text>
