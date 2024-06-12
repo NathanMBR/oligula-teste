@@ -186,38 +186,29 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
   }
 
   const getStepPositionString: AutomationData['getStepPositionString'] = id => {
-    let positionString = ''
+    const getStepPositionStringRecursively = (stepsToSearch: Array<StepData>): string => {
+      let positionString = ''
 
-    const findStepPositionRecursively = (stepsToSearch: Array<StepData>): boolean => {
-      let index = 1
-
-      for (const step of stepsToSearch) {
+      for (const [index, step] of stepsToSearch.entries()) {
         if (step.id === id) {
-          positionString += `${index}`
-
-          return true
+          positionString += `${index + 1}`
+          return positionString
         }
 
         if ('steps' in step.data) {
-          positionString += `${index}.`
-          const foundStep = findStepPositionRecursively(step.data.steps)
-          if (foundStep)
-            return true
+          const partialPosition = getStepPositionStringRecursively(step.data.steps)
+          if (partialPosition === '')
+            continue
 
-          const splittedPosition = positionString.split('.')
-          splittedPosition.pop()
-          positionString = splittedPosition.join('.')
+          positionString += `${index + 1}.${partialPosition}`
+          return positionString
         }
-
-        index++
       }
 
-      return false
+      return positionString
     }
 
-    findStepPositionRecursively(steps)
-
-    return positionString
+    return getStepPositionStringRecursively(steps)
   }
 
   const getVariable: AutomationData['getVariable'] = name => variables[name.toLowerCase()]
