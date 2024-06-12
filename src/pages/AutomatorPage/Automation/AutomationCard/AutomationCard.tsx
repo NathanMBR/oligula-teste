@@ -34,7 +34,7 @@ import { MinorSteps } from './MinorSteps'
 
 type AutomationCardPropsBase = {
   icon: ReactElement
-  position: number
+  position: number | string
   title: string
   label?: ReactNode
   onRemove: () => void

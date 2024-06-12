@@ -18,19 +18,20 @@ export const AutomationSteps = (props: AutomationStepsProps) => {
   } = props
 
   const {
+    getStepPositionString,
     deleteVariablesByStepId,
     removeStep
   } = useContext(AutomationContext)
 
   return <Stack>
     {
-      steps.map((step, index) => {
+      steps.map(step => {
         const {
           id,
           type
         } = step
 
-        const position = index + 1
+        const position = getStepPositionString(id)
         const onRemove = () => {
           deleteVariablesByStepId(id)
           removeStep(id)
