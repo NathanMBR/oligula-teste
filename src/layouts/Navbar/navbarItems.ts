@@ -13,7 +13,7 @@ type NavbarItem = {
 
 export const navbarItems = [
   {
-    link: '/automator',
+    link: '/automator/-1',
     label: 'Automatizador',
     icon: IconAutomation
   },
