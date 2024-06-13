@@ -17,6 +17,7 @@ import type {
   ReactElement,
   ReactNode
 } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import type {
   MoveStepData,
@@ -27,6 +28,7 @@ import type {
   CycleStepData,
   StepData
 } from '../../../../types'
+
 import { ensureCharactersLimit } from '../../../../helpers'
 
 import { StepTypes } from '../../StepTypes'
@@ -41,15 +43,16 @@ type AutomationCardPropsBase = {
 }
 
 type AutomationCardPropsWithSteps = AutomationCardPropsBase & {
-  currentStepId: StepData['id']
   steps: Array<StepData>
-  onEditSteps: (id: StepData['id']) => void
+  currentStep: {
+    id: StepData['id']
+    type: StepData['type']
+  }
 }
 
 type AutomationCardPropsWithoutSteps = AutomationCardPropsBase & {
-  currentStepId?: never
   steps?: never
-  onEditSteps?: never
+  currentStep?: never
 }
 
 export type AutomationCardProps =
@@ -63,10 +66,11 @@ const AutomationCardBase = (props: AutomationCardProps) => {
     title,
     label,
     steps,
-    currentStepId,
-    onRemove,
-    onEditSteps
+    currentStep,
+    onRemove
   } = props
+
+  const navigate = useNavigate()
 
   const actionIconProps = {
     variant: 'subtle',
@@ -101,8 +105,8 @@ const AutomationCardBase = (props: AutomationCardProps) => {
 
           <Group>
             {
-              currentStepId
-                ? <ActionIcon {...actionIconProps} onClick={() => onEditSteps(currentStepId)}>
+              currentStep
+                ? <ActionIcon {...actionIconProps} onClick={() => navigate(`/automator/${currentStep.id}`)}>
                   <IconMaximize {...iconProps} />
                 </ActionIcon>
                 : <ActionIcon {...actionIconProps} disabled>
@@ -210,14 +214,13 @@ export namespace AutomationCard {
     }
   />
 
-  export const Cycle = (props: Required<Pick<AutomationCardProps, 'position' | 'onRemove' | 'currentStepId' | 'onEditSteps'>> & CycleStepData['data']) => <AutomationCardBase
+  export const Cycle = (props: Required<Pick<AutomationCardProps, 'position' | 'onRemove' | 'currentStep'>> & CycleStepData['data']) => <AutomationCardBase
     icon={<StepTypes.cycle.icon />}
     title={StepTypes.cycle.title}
     steps={props.steps}
     position={props.position}
-    currentStepId={props.currentStepId}
+    currentStep={props.currentStep}
     onRemove={props.onRemove}
-    onEditSteps={props.onEditSteps}
     label={
       <Group gap={4}>
         <Text size='sm'>

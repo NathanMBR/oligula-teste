@@ -8,13 +8,11 @@ import { AutomationCard } from './AutomationCard'
 
 export type AutomationStepsProps = {
   steps: Array<StepData>
-  setExpandedStepId: (id: StepData['id']) => void
 }
 
 export const AutomationSteps = (props: AutomationStepsProps) => {
   const {
-    steps,
-    setExpandedStepId
+    steps
   } = props
 
   const {
@@ -87,12 +85,11 @@ export const AutomationSteps = (props: AutomationStepsProps) => {
           return <AutomationCard.Cycle
             key={id}
             position={position}
-            currentStepId={id}
+            currentStep={{ id: step.id, type: step.type }}
             saveItemsAs={step.data.saveItemsAs}
             iterable={step.data.iterable}
             steps={step.data.steps}
             onRemove={onRemove}
-            onEditSteps={setExpandedStepId}
           />
       })
     }
