@@ -69,15 +69,9 @@ export const Automation = (props: AutomationProps) => {
   const steps = getChildrenSteps(loadExpandedStep(expandedStepId)) || contextSteps
 
   useEffect(() => {
-    if (Number.isNaN(expandedStepId))
-      return
-
-    if (expandedStepId < 0)
-      return
-
-    const step = getStep(expandedStepId)
+    const step = loadExpandedStep(expandedStepId)
     if (!step)
-      return
+      return setPageSubtitle('Passos iniciais')
 
     const stepPosition = getStepPositionString(step.id)
 
