@@ -10,6 +10,10 @@ import { Automation } from './Automation'
 import { NewStep } from './NewStep'
 import { RunAutomation } from './RunAutomation'
 
+export type AutomatorPageParams = {
+  expandedStepId: string
+}
+
 export const AutomatorPage = () => {
   const [isNewStepOpen, setIsNewStepOpen] = useState(false)
 
