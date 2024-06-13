@@ -5,9 +5,6 @@ import {
 } from 'react'
 
 export type HeaderData = {
-  backHref: string
-  setBackHref: (href: string) => void
-
   pageTitle: string
   setPageTitle: (title: string) => void
 
@@ -16,9 +13,6 @@ export type HeaderData = {
 }
 
 const defaultHeaderData: HeaderData = {
-  backHref: '/',
-  setBackHref: () => {},
-
   pageTitle: '',
   setPageTitle: () => {},
 
@@ -33,14 +27,10 @@ export type HeaderProviderProps = Required<PropsWithChildren>
 export const HeaderProvider = (props: HeaderProviderProps) => {
   const { children } = props
 
-  const [backHref, setBackHref] = useState(defaultHeaderData.backHref)
   const [pageTitle, setPageTitle] = useState(defaultHeaderData.pageTitle)
   const [pageSubtitle, setPageSubtitle] = useState(defaultHeaderData.pageSubtitle)
 
   const headerData: HeaderData = {
-    backHref,
-    setBackHref,
-
     pageTitle,
     setPageTitle,
 
