@@ -6,9 +6,9 @@ import {
 import {
   HomePage,
   NotFoundPage,
-  AutomatorPage,
-  InmetroSealGeneratorPage,
-  SpreadsheetFormatterPage
+  AutomatorPage
+  // InmetroSealGeneratorPage,
+  // SpreadsheetFormatterPage
 } from '../pages'
 
 const router = createBrowserRouter([
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/automator',
+    path: '/automator/:expandedStepId',
     element: <AutomatorPage />
   }
 
