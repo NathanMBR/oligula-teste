@@ -11,7 +11,7 @@ import {
   type PropsWithChildren
 } from 'react'
 import { IconChevronLeft } from '@tabler/icons-react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { HeaderContext } from '../providers'
 import { ensureCharactersLimit } from '../helpers'
@@ -22,25 +22,25 @@ export const Header = (props: HeaderProps) => {
   const { children } = props
 
   const {
-    backHref,
     pageTitle,
     pageSubtitle
   } = useContext(HeaderContext)
 
+  const navigate = useNavigate()
+
   return (
     <>
       <Group mb='lg' >
-        <Link to={backHref}>
-          <ActionIcon
-            variant='subtle'
-            color='gray'
-            size='xl'
-            radius='xl'
-            aria-label='Voltar'
-          >
-            <IconChevronLeft />
-          </ActionIcon>
-        </Link>
+        <ActionIcon
+          variant='subtle'
+          color='gray'
+          size='xl'
+          radius='xl'
+          aria-label='Voltar'
+          onClick={() => navigate(-1)}
+        >
+          <IconChevronLeft />
+        </ActionIcon>
 
         <Box>
           <Title order={1}>{pageTitle}</Title>
