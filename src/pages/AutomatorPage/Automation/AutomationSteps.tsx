@@ -21,7 +21,7 @@ export const AutomationSteps = (props: AutomationStepsProps) => {
     removeStep
   } = useContext(AutomationContext)
 
-  return <Stack>
+  return <Stack mb={80}>
     {
       steps.map(step => {
         const {
