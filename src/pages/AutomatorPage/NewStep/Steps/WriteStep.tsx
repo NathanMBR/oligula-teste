@@ -11,6 +11,7 @@ import {
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
 import { ClearableTextInput } from '../../../../components'
+import { useParentId } from '../../../../hooks'
 
 import { StepFinishFooter } from '../StepFinishFooter'
 
@@ -31,6 +32,8 @@ export const WriteStep = (props: WriteStepProps) => {
   const [writeText, setWriteText] = useState('')
   const [selectedVariable, setSelectedVariable] = useState(variables[0] || '')
 
+  const parentId = useParentId()
+
   const noVariablesError = variables.length <= 0
     ? 'Desativado (não há variáveis disponíveis)'
     : null
@@ -42,14 +45,18 @@ export const WriteStep = (props: WriteStepProps) => {
   const selectError = noVariablesError || manualInputError || ''
 
   const addWriteStep = () => {
-    addStep({
-      id: generateRandomID(),
-      type: 'write',
-      data: {
-        text: writeText,
-        readFrom: selectedVariable
-      }
-    })
+    addStep(
+      {
+        id: generateRandomID(),
+        type: 'write',
+        data: {
+          text: writeText,
+          readFrom: selectedVariable
+        }
+      },
+
+      parentId
+    )
 
     onClose()
   }

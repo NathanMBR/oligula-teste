@@ -14,6 +14,7 @@ import {
 
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
+import { useParentId } from '../../../../hooks'
 
 import { StepFinishFooter } from '../StepFinishFooter'
 
@@ -29,6 +30,8 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
   const [saveAs, setSaveAs] = useState('')
   const [variableError, setVariableError] = useState('')
   const [isReadingFile, setIsReadingFile] = useState(false)
+
+  const parentId = useParentId()
 
   const {
     addStep,
@@ -64,14 +67,18 @@ export const ReadFileStep = (props: ReadFileStepProps) => {
 
     const id = generateRandomID()
 
-    addStep({
-      id,
-      type: 'readFile',
-      data: {
-        filename: filename,
-        saveAs: saveAs
-      }
-    })
+    addStep(
+      {
+        id,
+        type: 'readFile',
+        data: {
+          filename: filename,
+          saveAs: saveAs
+        }
+      },
+
+      parentId
+    )
 
     setVariable(saveAs, {
       ownerId: id,

@@ -13,6 +13,7 @@ import { IconVariable } from '@tabler/icons-react'
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
 import { ClearableTextInput } from '../../../../components'
+import { useParentId } from '../../../../hooks'
 
 import { StepFinishFooter } from '../StepFinishFooter'
 
@@ -39,6 +40,8 @@ export const ParseStringStep = (props: ParseStringStepProps) => {
   const [saveAs, setSaveAs] = useState('')
   const [variableError, setVariableError] = useState('')
 
+  const parentId = useParentId()
+
   const allowFinish =
     (parseText !== '' || selectedVariable !== '') &&
     separatorText !== '' &&
@@ -61,16 +64,20 @@ export const ParseStringStep = (props: ParseStringStepProps) => {
 
     const id = generateRandomID()
 
-    addStep({
-      id,
-      type: 'parseString',
-      data: {
-        parseString: parseText,
-        readFrom: selectedVariable,
-        divider: separatorText,
-        saveAs
-      }
-    })
+    addStep(
+      {
+        id,
+        type: 'parseString',
+        data: {
+          parseString: parseText,
+          readFrom: selectedVariable,
+          divider: separatorText,
+          saveAs
+        }
+      },
+
+      parentId
+    )
 
     setVariable(saveAs, {
       ownerId: id,

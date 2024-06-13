@@ -11,6 +11,7 @@ import { IconVariable } from '@tabler/icons-react'
 import { AutomationContext } from '../../../../providers'
 import { generateRandomID } from '../../../../helpers'
 import { ClearableTextInput } from '../../../../components'
+import { useParentId } from '../../../../hooks'
 
 import { StepFinishFooter } from '../StepFinishFooter'
 
@@ -28,6 +29,8 @@ export const CycleStep = (props: CycleStepProps) => {
     hasVariable,
     setVariable
   } = useContext(AutomationContext)
+
+  const parentId = useParentId()
 
   const variables = listVariables()
 
@@ -52,15 +55,19 @@ export const CycleStep = (props: CycleStepProps) => {
 
     const id = generateRandomID()
 
-    addStep({
-      id,
-      type: 'cycle',
-      data: {
-        iterable: selectedVariable,
-        steps: [],
-        saveItemsAs
-      }
-    })
+    addStep(
+      {
+        id,
+        type: 'cycle',
+        data: {
+          iterable: selectedVariable,
+          steps: [],
+          saveItemsAs
+        }
+      },
+
+      parentId
+    )
 
     setVariable(saveItemsAs, {
       ownerId: id,

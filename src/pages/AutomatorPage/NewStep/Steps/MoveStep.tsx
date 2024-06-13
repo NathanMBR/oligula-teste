@@ -22,6 +22,7 @@ import {
   sleep
 } from '../../../../helpers'
 import { AutomationContext } from '../../../../providers'
+import { useParentId } from '../../../../hooks'
 import type { MousePosition } from '../../../../types'
 
 import { StepFinishFooter } from '../StepFinishFooter'
@@ -40,6 +41,8 @@ export const MoveStep = (props: MoveStepProps) => {
   const [isCapturingMousePosition, setIsCapturingMousePosition] = useState(false)
 
   const { addStep } = useContext(AutomationContext)
+
+  const parentId = useParentId()
 
   const allowFinish =
     !Number.isNaN(mousePosition.x) &&
@@ -89,11 +92,15 @@ export const MoveStep = (props: MoveStepProps) => {
   }
 
   const addMoveStep = () => {
-    addStep({
-      id: generateRandomID(),
-      type: 'move',
-      data: mousePosition
-    })
+    addStep(
+      {
+        id: generateRandomID(),
+        type: 'move',
+        data: mousePosition
+      },
+
+      parentId
+    )
 
     onClose()
   }
