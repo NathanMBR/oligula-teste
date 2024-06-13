@@ -80,13 +80,23 @@ const defaultAutomationData: AutomationData = {
                     text: '',
                     readFrom: 'subitem'
                   }
+                },
+
+                {
+                  id: 2345678,
+                  type: 'cycle',
+                  data: {
+                    iterable: 'any',
+                    saveItemsAs: 'any2',
+                    steps: []
+                  }
                 }
               ]
             }
           },
 
           {
-            id: 6,
+            id: 60,
             type: 'write',
             data: {
               text: 'write test',
@@ -113,6 +123,24 @@ const defaultAutomationData: AutomationData = {
         iterable: 'no-steps',
         saveItemsAs: 'item-no-steps',
         steps: []
+      }
+    },
+
+    {
+      id: 300,
+      type: 'write',
+      data: {
+        text: '',
+        readFrom: 'subitem'
+      }
+    },
+
+    {
+      id: 301,
+      type: 'write',
+      data: {
+        text: '',
+        readFrom: 'subitem'
       }
     }
   ],
@@ -148,22 +176,48 @@ export const AutomationProvider = (props: AutomationProviderProps) => {
 
   const addStep: AutomationData['addStep'] = step => setSteps([...steps, step])
   const removeStep: AutomationData['removeStep'] = id => {
-    const removeStepRecursively = (steps: Array<StepData>): Array<StepData> => {
-      for (const [index, step] of steps.entries()) {
-        if (step.id === id) {
-          const stepsCopy = JSON.parse(JSON.stringify(steps)) as Array<StepData>
-          stepsCopy.splice(index, 1)
-          return stepsCopy
-        }
-
-        if ('steps' in step.data)
-          return removeStepRecursively(step.data.steps)
-      }
-
-      return steps
+    type RecursionResult = {
+      success: true
+      steps: Array<StepData>
+    } | {
+      success: false
     }
 
-    return setSteps(removeStepRecursively(steps))
+    const removeStepRecursively = (stepsToSearch: Array<StepData>): RecursionResult => {
+      const stepsCopy = JSON.parse(JSON.stringify(stepsToSearch)) as Array<StepData>
+
+      for (let i = 0; i < stepsCopy.length; i++) {
+        const step = stepsCopy[i]!
+
+        if (step.id === id) {
+          stepsCopy.splice(i, 1)
+          return {
+            success: true,
+            steps: stepsCopy
+          }
+        }
+
+        if ('steps' in step.data) {
+          const childrenStepsRemoveResult = removeStepRecursively(step.data.steps)
+          if (!childrenStepsRemoveResult.success)
+            continue
+
+          Object.assign(stepsCopy[i]!.data, { steps: childrenStepsRemoveResult.steps })
+          return {
+            success: true,
+            steps: stepsCopy
+          }
+        }
+      }
+
+      return {
+        success: false
+      }
+    }
+
+    const removeStepResult = removeStepRecursively(steps)
+    if (removeStepResult.success)
+      setSteps(removeStepResult.steps)
   }
 
   const getStep: AutomationData['getStep'] = id => {
