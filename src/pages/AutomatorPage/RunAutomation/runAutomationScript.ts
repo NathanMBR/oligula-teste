@@ -7,6 +7,7 @@ import type { AutomationData } from '../../../providers'
 export type RunAutomationData = Pick<
   AutomationData,
   'steps' |
+  'variables' |
   'hasVariable' |
   'getVariable' |
   'setVariable'
@@ -16,7 +17,7 @@ export type RunAutomationData = Pick<
 export const runAutomationScript = async (data: RunAutomationData) => {
   const {
     steps,
-
+    variables,
     hasVariable,
     getVariable,
     setVariable
@@ -25,11 +26,15 @@ export const runAutomationScript = async (data: RunAutomationData) => {
   for (const step of steps) {
     await sleep(1000)
 
-    if (step.type === 'move')
+    if (step.type === 'move') {
       await invoke('move_mouse_to', { position: step.data })
+      continue
+    }
 
-    if (step.type === 'click')
+    if (step.type === 'click') {
       await invoke('click', { button: MouseButton[step.data.button] })
+      continue
+    }
 
     if (step.type === 'write') {
       const textToWrite = step.data.text.length <= 0 && hasVariable(step.data.readFrom)
@@ -37,6 +42,8 @@ export const runAutomationScript = async (data: RunAutomationData) => {
         : step.data.text
 
       await invoke('write', { text: textToWrite })
+
+      continue
     }
 
     if (step.type === 'readFile')
@@ -70,6 +77,43 @@ export const runAutomationScript = async (data: RunAutomationData) => {
         ownerId: step.id,
         value: parsedText
       })
+
+      continue
+    }
+
+    if (step.type === 'cycle') {
+      /* eslint-disable no-console */
+      const iterable = getVariable(step.data.iterable)
+      if (!iterable) {
+        console.error(`Unexpected Error: Variable "${step.data.iterable}" not found`)
+        return
+      }
+
+      if (!Array.isArray(iterable.value)) {
+        console.error(`Unexpected Error: Variable "${step.data.iterable}" isn't a list (got ${typeof iterable.value})`)
+        return
+      }
+      /* eslint-enable no-console */
+
+      for (const item of iterable.value) {
+        const newVariable = {
+          ownerId: step.id,
+          value: item
+        }
+
+        await runAutomationScript({
+          steps: step.data.steps,
+          variables: {
+            ...variables,
+            [step.data.saveItemsAs]: newVariable
+          },
+          hasVariable,
+          getVariable,
+          setVariable
+        })
+      }
+
+      continue
     }
   }
 }
