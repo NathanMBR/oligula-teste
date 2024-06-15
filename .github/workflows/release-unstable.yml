@@ -17,10 +17,10 @@ jobs:
       matrix:
         include:
           - platform: "ubuntu-22.04"
-            args: "--verbose --config ./src-tauri/tauri.conf.dev.json"
+            args: "--verbose"
 
           - platform: "windows-latest"
-            args: "--verbose --config ./src-tauri/tauri.conf.dev.json"
+            args: "--verbose"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -61,10 +61,8 @@ jobs:
           releaseName: "Oligula Automatizações v__VERSION__-${{ github.run_id }}-${{ github.run_attempt }} (Instável)"
           releaseBody: 'Para baixar, veja a seção "Assets" abaixo (VERSÃO INSTÁVEL)'
           releaseDraft: false
-          prerelease: false
+          prerelease: true
           includeRelease: false
           includeDebug: true
           includeUpdaterJson: true
-          releaseCommitish: master
-          repo: oligula-automatizacoes-unstable
           args: ${{ matrix.args }}
