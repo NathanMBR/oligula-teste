@@ -1,0 +1,20 @@
+{
+  "package": {
+    "productName": "Oligula Automatizações (Instável)"
+  },
+  "tauri": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/NathanMBR/oligula-automatizacoes-unstable/releases/latest/download/latest.json"
+      ]
+    },
+    "windows": [
+      {
+        "title": "Oligula Automatizações (Instável)"
+      }
+    ],
+    "bundle": {
+      "identifier": "com.nathanm.oligula-automatizacoes-unstable"
+    }
+  }
+}
