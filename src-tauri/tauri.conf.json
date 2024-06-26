@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Oligula Automatizações (TESTE)",
+    "productName": "Oligula Teste",
     "version": "0.1.0"
   },
   "tauri": {
@@ -40,7 +40,7 @@
     },
     "windows": [
       {
-        "title": "Oligula Automatizações (TESTE)",
+        "title": "Oligula Teste",
         "width": 1280,
         "height": 720,
         "minWidth": 800,
