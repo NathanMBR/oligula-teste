@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Oligula Automatizações",
+    "productName": "Oligula Automatizações (TESTE)",
     "version": "0.1.0"
   },
   "tauri": {
@@ -31,7 +31,7 @@
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg2RDA0QzQxOUFBMkY0OUMKUldTYzlLS2FRVXpRaHBYZnBSUitEandMWGFrUDdjbTlRa1R0UTVab1YvRzJPYXhQNXhsL2lGelMK",
       "endpoints": [
-        "https://github.com/NathanMBR/oligula-automatizacoes/releases/latest/download/latest.json"
+        "https://github.com/NathanMBR/oligula-teste/releases/latest/download/latest.json"
       ],
       "windows": {
         "installMode": "passive",
@@ -40,7 +40,7 @@
     },
     "windows": [
       {
-        "title": "Oligula Automatizações",
+        "title": "Oligula Automatizações (TESTE)",
         "width": 1280,
         "height": 720,
         "minWidth": 800,
@@ -53,7 +53,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.nathanm.oligula-automatizacoes",
+      "identifier": "com.nathanm.oligula-teste",
       "resources": [
         "./icons/*"
       ],
