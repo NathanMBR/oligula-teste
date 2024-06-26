@@ -1,7 +1,7 @@
 [package]
 name = "oligula-automatizacoes"
 version = "1.0.0"
-description = "A Tauri App"
+description = "Desktop automation app made with React, TypeScript, Tauri & Rust"
 authors = ["you"]
 edition = "2021"
 
