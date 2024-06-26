@@ -10,15 +10,39 @@ import {
 } from '@mantine/core'
 import {
   app,
-  path
+  path,
+  updater,
+  process
 } from '@tauri-apps/api'
+import { UnlistenFn } from '@tauri-apps/api/event'
 
+/* eslint-disable no-console */
 const defaultPreloadData = {
   app: {
     version: 'unknown',
     configDir: ''
+  },
+
+  update: {
+    status: 'DONE' as updater.UpdateStatus,
+    available: false,
+    unlisten: null as UnlistenFn | null,
+    execute: async () => {
+      try {
+        const { shouldUpdate } = await updater.checkUpdate()
+        if (!shouldUpdate)
+          return
+
+        await updater.installUpdate()
+        await process.relaunch()
+      } catch (error) {
+        console.error('Failed to execute update:')
+        console.error(error)
+      }
+    }
   }
 }
+/* eslint-enable no-console */
 
 export const PreloadContext = createContext(defaultPreloadData)
 
@@ -28,8 +52,13 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
   const { children } = props
 
   const [isLoading, setIsLoading] = useState(false)
+
   const [appVersion, setAppVersion] = useState(defaultPreloadData.app.version)
   const [appConfigDir, setAppConfigDir] = useState(defaultPreloadData.app.configDir)
+
+  const [updateStatus, setUpdateStatus] = useState<updater.UpdateStatus>('DONE')
+  const [updateAvailable, setUpdateAvailable] = useState(false)
+  const [updateUnlisten, setUpdateUnlisten] = useState<UnlistenFn | null>(null)
 
   /* eslint-disable no-console */
   const loadVersion = async () => {
@@ -49,6 +78,47 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
       console.error('Failed to load app config path:\n' + error)
     }
   }
+
+  const checkUpdate = async () => {
+    try {
+      console.log('Checking for updates...')
+
+      const {
+        shouldUpdate,
+        manifest
+      } = await updater.checkUpdate()
+
+      if (!shouldUpdate)
+        return console.log('No updates found.')
+
+      console.log('Found update!')
+
+      if (manifest) {
+        console.log(`Version: ${manifest.version}`)
+        console.log(`Release date: ${manifest.date}`)
+      }
+
+      const unlistenUpdateEvents = await updater.onUpdaterEvent(event => {
+        const {
+          status,
+          error
+        } = event
+
+        setUpdateStatus(status)
+
+        if (error) {
+          console.error('Failed to listen for update events:')
+          console.error(error)
+        }
+      })
+
+      setUpdateAvailable(shouldUpdate)
+      setUpdateUnlisten(unlistenUpdateEvents)
+    } catch (error) {
+      console.error('Failed to check for updates:')
+      console.error(error)
+    }
+  }
   /* eslint-enable no-console */
 
   useEffect(
@@ -57,7 +127,8 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
 
       Promise.all([
         loadVersion(),
-        loadConfigPath()
+        loadConfigPath(),
+        checkUpdate()
       ])
         .finally(() => setIsLoading(false))
     },
@@ -76,6 +147,13 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
       app: {
         version: appVersion,
         configDir: appConfigDir
+      },
+
+      update: {
+        status: updateStatus,
+        available: updateAvailable,
+        unlisten: updateUnlisten,
+        execute: defaultPreloadData.update.execute
       }
     }}>
       {children}
