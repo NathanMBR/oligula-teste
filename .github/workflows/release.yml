@@ -1,8 +1,9 @@
 name: Release Workflow
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: [Quality Assurance Workflow]
+    types: [completed]
+    branches: [master]
 
 jobs:
   publish:
