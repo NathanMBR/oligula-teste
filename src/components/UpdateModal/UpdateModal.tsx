@@ -14,21 +14,27 @@ import {
 } from 'react'
 
 import { PreloadContext } from '../../providers'
+import { sleep } from '../../helpers'
 
 export const UpdateModal = () => {
   const { update } = useContext(PreloadContext)
 
-  const [open, isOpen] = useState<boolean>(update.available)
+  const [open, isOpen] = useState(update.available)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   const handleClose = () => isOpen(false)
 
-  const handleUpdate = async () => {
-    await update.execute()
+  const handleUpdate = () => {
+    const executeUpdate = async () => {
+      await sleep(1000)
+      await update.execute()
+    }
 
-    isOpen(false)
+    setIsUpdating(true)
+
+    executeUpdate()
+      .finally(handleClose)
   }
-
-  const isUpdating = update.status === 'PENDING'
 
   useEffect(() => {
     return () => {
@@ -53,9 +59,7 @@ export const UpdateModal = () => {
             <Title order={3}>Atualização disponível</Title>
           </Modal.Title>
 
-          <Transition
-            mounted={!isUpdating}
-          >
+          <Transition mounted={!isUpdating}>
             {
               styles => <Modal.CloseButton style={styles} disabled={isUpdating} />
             }
