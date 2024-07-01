@@ -87,7 +87,7 @@ const UpdateModalSuccessBody = (props: Pick<UpdateModalBodyProps, 'handleClose'>
       <Text>Por favor, <span style={{ fontWeight: 'bold' }}>reinicie o programa</span> para aplicar as atualizações.</Text>
 
       <Group mt='md' justify='flex-end'>
-        <Button onClick={handleClose}>Fechar</Button>
+        <Button onClick={handleClose}>Ok</Button>
       </Group>
     </>
   )
@@ -128,8 +128,8 @@ export const UpdateModal = () => {
 
   const { update } = useContext(PreloadContext)
 
-  const [open, isOpen] = useState(update.available || true as boolean)
-  const [updateState, setUpdateState] = useState<UpdateStates>('AVAILABLE')
+  const [open, isOpen] = useState(update.available)
+  const [updateState, setUpdateState] = useState<UpdateStates>('SUCCESS')
 
   const handleClose = () => isOpen(false)
 
