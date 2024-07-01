@@ -12,32 +12,38 @@ import {
   app,
   path,
   updater,
-  process
+  process,
+  os
 } from '@tauri-apps/api'
-import { UnlistenFn } from '@tauri-apps/api/event'
 
 /* eslint-disable no-console */
 const defaultPreloadData = {
+  os: {
+    type: 'unknown' as os.OsType | 'unknown'
+  },
+
   app: {
     version: 'unknown',
     configDir: ''
   },
 
   update: {
-    status: 'DONE' as updater.UpdateStatus,
     available: false,
-    unlisten: null as UnlistenFn | null,
     execute: async () => {
       try {
         const { shouldUpdate } = await updater.checkUpdate()
         if (!shouldUpdate)
-          return
+          return false
 
         await updater.installUpdate()
         await process.relaunch()
+
+        return true
       } catch (error) {
         console.error('Failed to execute update:')
         console.error(error)
+
+        return false
       }
     }
   }
@@ -53,20 +59,31 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const [osType, setOsType] = useState(defaultPreloadData.os.type)
+
   const [appVersion, setAppVersion] = useState(defaultPreloadData.app.version)
   const [appConfigDir, setAppConfigDir] = useState(defaultPreloadData.app.configDir)
 
-  const [updateStatus, setUpdateStatus] = useState<updater.UpdateStatus>('DONE')
   const [updateAvailable, setUpdateAvailable] = useState(false)
-  const [updateUnlisten, setUpdateUnlisten] = useState<UnlistenFn | null>(null)
 
   /* eslint-disable no-console */
+  const loadOsType = async () => {
+    try {
+      const currentOsType = await os.type()
+      setOsType(currentOsType)
+    } catch (error) {
+      console.error('Failed to load OS type:')
+      console.error(error)
+    }
+  }
+
   const loadVersion = async () => {
     try {
       const version = await app.getVersion()
       setAppVersion(version)
     } catch (error) {
-      console.error('Failed to load app version:\n', error)
+      console.error('Failed to load app version:')
+      console.error(error)
     }
   }
 
@@ -75,7 +92,8 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
       const configDir = await path.configDir()
       setAppConfigDir(configDir)
     } catch (error) {
-      console.error('Failed to load app config path:\n' + error)
+      console.error('Failed to load app config path:')
+      console.error(error)
     }
   }
 
@@ -98,22 +116,7 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
         console.log(`Release date: ${manifest.date}`)
       }
 
-      const unlistenUpdateEvents = await updater.onUpdaterEvent(event => {
-        const {
-          status,
-          error
-        } = event
-
-        setUpdateStatus(status)
-
-        if (error) {
-          console.error('Failed to listen for update events:')
-          console.error(error)
-        }
-      })
-
       setUpdateAvailable(shouldUpdate)
-      setUpdateUnlisten(unlistenUpdateEvents)
     } catch (error) {
       console.error('Failed to check for updates:')
       console.error(error)
@@ -126,6 +129,7 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
       setIsLoading(true)
 
       Promise.all([
+        loadOsType(),
         loadVersion(),
         loadConfigPath(),
         checkUpdate()
@@ -144,15 +148,17 @@ export const PreloadProvider = (props: PreloadProviderProps) => {
 
   return (
     <PreloadContext.Provider value={{
+      os: {
+        type: osType
+      },
+
       app: {
         version: appVersion,
         configDir: appConfigDir
       },
 
       update: {
-        status: updateStatus,
         available: updateAvailable,
-        unlisten: updateUnlisten,
         execute: defaultPreloadData.update.execute
       }
     }}>
